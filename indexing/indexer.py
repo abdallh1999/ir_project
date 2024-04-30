@@ -2,6 +2,8 @@ from collections import defaultdict
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
+
+from query.query_processor import QueryProcessor
 from storage.storage_manager import StorageManager
 
 
@@ -11,17 +13,29 @@ class Indexer:
         self.vectorizer = None  # Hold a reference to the TF-IDF vectorizer
         self.document_vectors = None  # Hold document vectors after transformation
         self.storage_manager = StorageManager()
+        self.query_processor = QueryProcessor()
 
     def index_documents(self, documents):
         # Create a TF-IDF vectorizer and fit it to the documents
         self.vectorizer = TfidfVectorizer()
-        self.document_vectors = self.vectorizer.fit_transform(documents)
-        # Save the vectorizer and document vectors
+        # Tokenize and preprocess documents
+        preprocessed_documents = [self.query_processor.complete_process_query(doc.lower()) for doc in documents]
+        processed_documents = [' '.join(doc) for doc in preprocessed_documents]
+        print(preprocessed_documents)
+        print(processed_documents)
+        self.document_vectors = self.vectorizer.fit_transform(processed_documents)
+        # # Save the vectorizer and document vectors
         self.storage_manager.save_vectorizer(self.vectorizer)
         self.storage_manager.save_document_vectors(self.document_vectors)
-        for doc_id, document in enumerate(documents):
+        for doc_id, document in enumerate(processed_documents):
+            # document_words_list = self.query_processor.complete_process_query(document)
+            # self.document_vectors = self.vectorizer.fit_transform(document_words_list)
+            # self.storage_manager.save_vectorizer(self.vectorizer)
+            # self.storage_manager.save_document_vectors(self.document_vectors)
+
             words = document.lower().split()  # Basic tokenization and lowercasing
-            for word in words:
+            processed_documents = document.lower().split()  # Basic tokenization and lowercasing
+            for word in processed_documents:
                 if doc_id not in self.inverted_index[word]:
                     self.inverted_index[word].append(doc_id)
         # Save the inverted index

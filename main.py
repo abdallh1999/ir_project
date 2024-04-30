@@ -7,6 +7,8 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 
+
+
 def main():
     interface = CLIInterface()
     interface.run()
@@ -15,7 +17,7 @@ def main():
 if __name__ == '__main__':
     main()
 
-    # Sample data
+    # # Sample data
     # documents = [
     #     "Apple is a fruit.",
     #     "Banana is also a fruit.",

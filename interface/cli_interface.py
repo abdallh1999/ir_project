@@ -1,6 +1,7 @@
 from query.query_processor import QueryProcessor
 from indexing.indexer import Indexer
 from ranking.ranker import Ranker
+import xml.etree.ElementTree as ET
 
 
 class CLIInterface:
@@ -8,6 +9,11 @@ class CLIInterface:
         self.query_processor = QueryProcessor()
         self.indexer = Indexer()
         self.ranker = Ranker()
+        self.documents = []
+
+    def load_data(self, file_path):
+        # Load the dataset
+        self.documents = self.load_dataset(file_path)
 
     def run(self):
         print("Welcome to the Information Retrieval System!")
@@ -43,17 +49,18 @@ class CLIInterface:
             # results = self.indexer.search(processed_query)
             # Display the ranked search results
             # Check the top similarity score against the threshold
-            top_similarity_score = similarity_scores[0] if similarity_scores.size>0 else 0
-
-            if top_similarity_score < 0.05:
-                # If the top score is below the threshold, return an unsure message
-                print("The system is unsure about the query. No relevant documents found.")
-                # return "The system is unsure about the query. No relevant documents found."
-            else:
-                print("\nSearch Results (ranked by relevance):")
-                for rank, doc_id in enumerate(ranked_results):
-                    # doc_id = int(doc_id)
-                    print(f"Rank {rank + 1}: Document {doc_id + 1}: {documents[doc_id]}")
+            # top_similarity_score = similarity_scores[0] if similarity_scores.size>0 else 0
+            print("this the similarity score:", similarity_scores)
+            print(ranked_results)
+            # if top_similarity_score ==0:
+            #     # If the top score is below the threshold, return an unsure message
+            #     print("The system is unsure about the query. No relevant documents found.")
+            #     # return "The system is unsure about the query. No relevant documents found."
+            # else:
+            print("\nSearch Results (ranked by relevance):")
+            for rank, doc_id in enumerate(ranked_results):
+                # doc_id = int(doc_id)
+                print(f"Rank {rank + 1}: Document {doc_id + 1}: {documents[doc_id]}")
                 # if results:
                 #     # ranked_results = self.ranker.rank_results(results)
                 #     print("\nSearch Results:")
@@ -62,3 +69,17 @@ class CLIInterface:
                 #
                 # else:
                 #     print("No results found.")
+
+    def load_dataset(self, file_path):
+        tree = ET.parse(file_path)
+        root = tree.getroot()
+
+        # Extract documents
+        documents = []
+        for doc in root.findall('document'):
+            doc_id = doc.get('id')
+            text = doc.find('text').text
+            # Add other metadata as needed
+            documents.append((doc_id, text))
+
+        return documents
