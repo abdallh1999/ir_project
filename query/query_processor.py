@@ -8,6 +8,8 @@ from nltk import pos_tag
 from nltk.corpus import wordnet, stopwords
 from spellchecker import SpellChecker
 
+cureent_index = 0
+
 
 class QueryProcessor:
     def process_query(self, query):
@@ -17,26 +19,35 @@ class QueryProcessor:
 
     def complete_process_query(self, text):
         # text = "The boys are running and the leaves are falling."
+        # if (text is list):
+        #     [print(t.lower()) for t in text]
+        # else:
+        #     text.lower()
+        # print(text)
+        global cureent_index
+        cureent_index+=1
+        print(f'\n-------------------------curent_index ={cureent_index}---------------- /n')
         text.lower()
-        print(text)
+        # print(text)
         # Tokenize into words
         words = word_tokenize(text)
-        print(words)
+        # print(words)
         words = self.remove_punctuation(words)
-        print(words)
+        # print(words)
 
         words = self.remove_stop_wrods(words)
-        print(words)
+        # print(words)
 
-        words = self.correct_sentence_spelling(words)
-        print(words)
+        # words = self.correct_sentence_spelling(words)
+        # print(words)
 
-        # # Stemming
-        # stemmed_words = self.stemming(words)
+        # Stemming
+        stemmed_words = self.stemming(words)
+        return stemmed_words
         # POS tagging
-        pos_tags = pos_tag(words)
-        lemmatized_words = self.lemmatization(words)
-        return lemmatized_words
+        # pos_tags = pos_tag(words)
+        # lemmatized_words = self.lemmatization(words)
+        # return lemmatized_words
 
     def stemming(self, words):
         # Stemming

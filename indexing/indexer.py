@@ -10,6 +10,8 @@ from storage.storage_manager import StorageManager
 class Indexer:
     def __init__(self):
         self.inverted_index = defaultdict(list)
+        self.word_list = []
+
         self.vectorizer = None  # Hold a reference to the TF-IDF vectorizer
         self.document_vectors = None  # Hold document vectors after transformation
         self.storage_manager = StorageManager()
@@ -19,7 +21,9 @@ class Indexer:
         # Create a TF-IDF vectorizer and fit it to the documents
         self.vectorizer = TfidfVectorizer()
         # Tokenize and preprocess documents
-        preprocessed_documents = [self.query_processor.complete_process_query(doc.lower()) for doc in documents]
+        preprocessed_documents = [
+            self.query_processor.complete_process_query(doc.get('title').lower() + doc.get('text').lower()) for doc in
+            documents]
         processed_documents = [' '.join(doc) for doc in preprocessed_documents]
         print(preprocessed_documents)
         print(processed_documents)
@@ -34,12 +38,20 @@ class Indexer:
             # self.storage_manager.save_document_vectors(self.document_vectors)
 
             words = document.lower().split()  # Basic tokenization and lowercasing
+
             processed_documents = document.lower().split()  # Basic tokenization and lowercasing
+            # word_list.append(processed_documents)
+            # self.storage_manager.save_vocabulary(word_list)
+
             for word in processed_documents:
+                self.word_list.append(word)
+
+                print('\n------------------------' + word + '\n----------------------------')
                 if doc_id not in self.inverted_index[word]:
                     self.inverted_index[word].append(doc_id)
         # Save the inverted index
         self.storage_manager.save_inverted_index(self.inverted_index)
+        self.storage_manager.save_vocabulary(self.word_list)
 
     def load_data(self):
         # Load the inverted index, document vectors, and vectorizer from files
