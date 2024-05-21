@@ -26,7 +26,7 @@ class QueryProcessor:
         # print(text)
         global cureent_index
         cureent_index+=1
-        print(f'\n-------------------------curent_index ={cureent_index}---------------- /n')
+        # print(f'\n-------------------------curent_index ={cureent_index}---------------- /n')
         text.lower()
         # print(text)
         # Tokenize into words
@@ -54,7 +54,7 @@ class QueryProcessor:
         stemmer = PorterStemmer()
         stemmed_words = [stemmer.stem(word) for word in words]
 
-        print(stemmed_words)
+        # print(stemmed_words)
         return stemmed_words
 
     def lemmatization(self, words):

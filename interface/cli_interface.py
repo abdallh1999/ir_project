@@ -1,3 +1,4 @@
+import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
 from query.query_processor import QueryProcessor
@@ -6,6 +7,8 @@ from ranking.ranker import Ranker
 import xml.etree.ElementTree as ET
 import json
 import pandas as pd
+
+from scipy.sparse import vstack
 
 
 class CLIInterface:
@@ -69,7 +72,7 @@ class CLIInterface:
         return precision, recall
 
     def search(self, query_text):
-        self.indexer.index_documents(self.documents)
+        # self.indexer.index_documents(self.documents)
 
         # processed_query = self.query_processor.process_query(query)
         processed_query = self.query_processor.complete_process_query(query_text)
@@ -87,7 +90,8 @@ class CLIInterface:
         #         enumerate(ranked_results)]
 
     def search2(self, query_text):
-        self.indexer.index_documents(self.documents)
+        # self.indexer.index_documents(self.documents)
+        self.indexer.index_documents_from_file(file_path='/home/abdallh/Documents/webis-touche2020/corpus.jsonl')
         # self.indexer.load_data()
         query_text.lower()
         query_vector = self.indexer.vectorizer.transform([query_text])
@@ -103,6 +107,120 @@ class CLIInterface:
 
         return [(self.documents[i]['_id'], similarity_scores[i]) for i in ranked_doc_indices]
 
+    import numpy as np
+    def search_query(self, query_text):
+
+        processed_query = self.query_processor.complete_process_query(query_text)
+        query_text = ' '.join(processed_query)
+        self.indexer.load_all_components()
+        # self.indexer.index_documents_from_file(file_path='/home/abdallh/Documents/webis-touche2020/corpus.jsonl')
+        # Load the query vector
+        query_vector = self.indexer.vectorizer.transform([query_text])
+        # Initialize lists to store similarity scores and document IDs
+        similarity_scores = []
+        document_ids = []
+
+        # Iterate over each batch of document vectors
+        for batch_id in range(self.indexer.storage_manager.get_num_batches()):
+            # Load the document vectors for the current batch
+            document_vectors = self.indexer.storage_manager.load_batch_document_vectors(batch_id)
+
+            # Calculate cosine similarity between query vector and document vectors
+            similarity_batch = cosine_similarity(query_vector, document_vectors)
+
+            # Flatten the similarity matrix to get similarity scores for each document in the batch
+            similarity_scores.extend(similarity_batch.flatten())
+
+            # Populate document IDs corresponding to the batch
+            document_ids.extend(
+                range(batch_id * self.indexer.storage_manager.batch_size,
+                      (batch_id + 1) * self.indexer.storage_manager.batch_size))
+
+        # Combine similarity scores with corresponding document IDs
+        results = list(zip(document_ids, similarity_scores))
+
+        # Sort the results based on similarity scores in descending order
+        results.sort(key=lambda x: x[1], reverse=True)
+
+        return results
+
+    def search_components(self, query_text):
+        # Ensure all components are loaded
+
+        # if not self.indexer.vectorizer or not self.indexer.document_vectors or not self.indexer.inverted_index or not self.indexer.word_set:
+        #     self.indexer.load_all_components()
+
+        self.indexer.index_documents_from_file()
+
+        # Process the query
+        processed_query = self.query_processor.complete_process_query(query_text)
+        query_text = ' '.join(processed_query)
+        query_vector = self.indexer.vectorizer.transform([query_text])
+        # Perform the search to get similarity scores
+        # similarity_scores = self.indexer.search_vectors(query_vector)
+        # # Rank the results based on similarity scores
+        # ranked_results = self.ranker.rank_vectors_results(similarity_scores)
+
+        # Print the shape of the query vector
+        print("Query Vector Shape:", query_vector.shape)
+        print(type(self.indexer.document_vectors))  # Output: <class 'numpy.ndarray'>
+        for idx, sparse_matrix in enumerate(self.indexer.document_vectors):
+            # Perform operations on the sparse matrix
+            # For example, print some information about each matrix
+            print(f"Matrix {idx + 1}:")
+            print(f"Shape: {sparse_matrix.shape}")
+            print(f"Number of non-zero elements: {sparse_matrix.nnz}")
+            print()
+
+        # Concatenate sparse matrices vertically if needed
+        concatenated_matrix = vstack(self.indexer.document_vectors)
+        # Check if document vectors are sparse matrices
+        if isinstance(self.indexer.document_vectors, list):
+            # Convert sparse matrices to dense matrices for better readability
+            # Convert list of sparse matrices to a single dense matrix
+            document_vectors_dense = np.vstack([batch.toarray() for batch in self.indexer.document_vectors])
+            # document_vectors_dense = [batch.toarray() for batch in self.indexer.document_vectors]
+        else:
+            # If document vectors are already dense, use them directly
+            document_vectors_dense = self.indexer.document_vectors
+            # document_vectors_dense = np.vstack([batch.toarray() for batch in self.indexer.document_vectors])
+        print(type(document_vectors_dense))  # Output: <class 'scipy.sparse.csr.csr_matrix'>
+        # Print the shape of the document vectors
+        print("Document Vectors Shape:", len(document_vectors_dense))
+        print("Document Vectors Shape:", document_vectors_dense.shape)
+
+        # Print the first few elements of the query vector
+        print("First few elements of Query Vector:")
+        print(query_vector[:10])
+
+        # Print the first few elements of the document vectors
+        print("First few elements of Document Vectors:")
+        for batch in document_vectors_dense[:10]:
+            print(batch)
+
+        # Ensure that query_vector and document_vectors_dense are numpy arrays
+        query_vector = np.asarray(query_vector)
+        document_vectors_dense = np.asarray(document_vectors_dense)
+
+        # Compute similarity scores
+        similarity_scores = cosine_similarity(query_vector, document_vectors_dense).flatten()
+
+        # Rank documents based on similarity scores
+        ranked_doc_indices = similarity_scores.argsort()[::-1]
+
+        # Print similarity scores and ranked document indices
+        print("Similarity Scores:")
+        print(similarity_scores)
+        print("Ranked Document Indices:")
+        print(ranked_doc_indices)
+
+        # Print ranked documents
+        for rank, doc_id in enumerate(ranked_doc_indices):
+            self.print_ranked_data(self.documents[doc_id])
+
+        # Return ranked document IDs and similarity scores
+        return [(self.documents[i]['_id'], similarity_scores[i]) for i in ranked_doc_indices]
+
     def run(self):
         print("Welcome to the Information Retrieval System!")
 
@@ -113,11 +231,13 @@ class CLIInterface:
             "Both apple and banana are healthy.",
             "Orange is another type of fruit."
         ]
-
+        # Index the sample documents (optional if documents are already indexed)
+        # if not self.indexer.document_vectors:
+        #     self.indexer.index_documents(documents)
         # Index the sample documents
         # self.indexer.index_documents(documents)
-        # self.indexer.index_documents(self.documents)
-        self.indexer.load_data()
+        self.indexer.index_documents(self.documents)
+        # self.indexer.load_data()
         while True:
             query = input("\nEnter your search query (or 'exit' to quit): ")
             if query.lower() == 'exit':
@@ -130,9 +250,15 @@ class CLIInterface:
             print(joined_string)
             # Transform the processed query to VSM using the same vectorizer as the documents
             query_vector = self.indexer.vectorizer.transform([joined_string])
+            print(type(self.indexer.document_vectors))  # Output: <class 'numpy.ndarray'>
+            print(type(query_vector))  # Output: <class 'numpy.ndarray'>
 
             # Perform the search to get similarity scores
             similarity_scores = self.indexer.search_vectors(query_vector)
+            print("Query Vector Shape:", query_vector.shape)
+            # Print the shape of the document vectors
+            print("Document Vectors Shape:", self.indexer.document_vectors.shape[0])
+            print("Document Vectors Shape:", self.indexer.document_vectors.shape)
 
             # Rank the results based on similarity scores
             ranked_results = self.ranker.rank_vectors_results(similarity_scores)
@@ -175,7 +301,7 @@ class CLIInterface:
                 # print(self.documents[doc_id])
                 print()
 
-            return ranked_results
+            # return ranked_results
 
     def load_dataset(self, file_path):
         tree = ET.parse(file_path)
@@ -201,8 +327,8 @@ class CLIInterface:
             # Read each line from the file
             for line in file:
                 x += 1
-                # if x > 100:
-                #     break
+                if x > 100:
+                    break
                 print(x)
                 # Parse the line as a JSON object
                 doc = json.loads(line)

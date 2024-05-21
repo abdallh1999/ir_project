@@ -1,42 +1,7 @@
-# 1. Precision@10: Proportion of relevant documents among the top 10 retrieved documents.
-# 2. Recall: Proportion of relevant documents that were retrieved out of the total number of relevant documents.
-# 3. MAP (Mean Average Precision): Average of precision values at different recall levels.
-# 4. Precision: Proportion of retrieved documents that are relevant.
-# 5. MRR (Mean Reciprocal Rank): Average of the reciprocal ranks of the first relevant document found.
-# 6. Rank Reciprocal Mean: Average reciprocal rank for all queries.
-def precision_at_k(actual, predicted, k):
-    predicted = predicted[:k]
-    tp = len(set(predicted) & set(actual))
-    return tp / k
-
-def recall(actual, predicted):
-    tp = len(set(predicted) & set(actual))
-    return tp / len(actual)
-
-def average_precision_at_k(actual, predicted, k):
-    precisions = [precision_at_k(actual, predicted, i+1) for i in range(k) if predicted[i] in actual]
-    if not precisions:
-        return 0
-    return sum(precisions) / min(k, len(actual))
-
-def mean_reciprocal_rank(actual, predicted):
-    for i, p in enumerate(predicted):
-        if p in actual:
-            return 1 / (i + 1)
-    return 0
-
 # Example usage
-actual = [1, 2, 3]
-predicted = [3, 1, 5, 2, 7]
-k = 3
-
-print("Precision@{}: {}".format(k, precision_at_k(actual, predicted, k)))
-print("Recall: {}".format(recall(actual,predicted)))
-print("MAP: {}".format(average_precision_at_k(actual,predicted,k)))
-print("MRR: {}".format(mean_reciprocal_rank(actual,predicted)))
-
-
-
+# actual = [1, 2, 3]
+# predicted = [3, 1, 5, 2, 7]
+# k = 3
 
 
 from sklearn.model_selection import train_test_split
@@ -75,3 +40,50 @@ test_f1 = f1_score(test_labels, test_results)
 test_ndcg = ndcg_score(test_labels, test_results)
 
 print(f'Test Precision: {test_precision}, Test Recall: {test_recall}, Test F1-Score: {test_f1}, Test NDCG: {test_ndcg}')
+
+
+# 1. Precision@10: Proportion of relevant documents among the top 10 retrieved documents.
+# 2. Recall: Proportion of relevant documents that were retrieved out of the total number of relevant documents.
+# 3. MAP (Mean Average Precision): Average of precision values at different recall levels.
+# 4. Precision: Proportion of retrieved documents that are relevant.
+# 5. MRR (Mean Reciprocal Rank): Average of the reciprocal ranks of the first relevant document found.
+# 6. Rank Reciprocal Mean: Average reciprocal rank for all queries.
+# Balance Precision and Recall: Depending on your use case,
+# decide whether to prioritize precision (reducing false positives) or
+# recall (reducing false negatives).
+#Consider NDCG and MAP: For evaluating ranked results,
+# NDCG and MAP can provide insights into how well your system
+# ranks the most relevant documents.
+class Evaluate:
+    def __init__(self):
+        self.actual = []
+        self.predicted = []
+        self.k = 10
+
+    def precision_at_k(self,actual, predicted, k):
+        predicted = predicted[:k]
+        tp = len(set(predicted) & set(actual))
+        return tp / k
+
+    def recall(self,actual, predicted):
+        tp = len(set(predicted) & set(actual))
+        return tp / len(actual)
+
+    def average_precision_at_k(self,actual, predicted, k):
+        precisions = [self.precision_at_k(actual, predicted, i + 1) for i in range(k) if predicted[i] in actual]
+        if not precisions:
+            return 0
+        return sum(precisions) / min(k, len(actual))
+
+    def mean_reciprocal_rank(self,actual, predicted):
+        for i, p in enumerate(predicted):
+            if p in actual:
+                return 1 / (i + 1)
+        return 0
+
+    def print_all(self):
+        print("Precision@{}: {}".format(self.k, self.precision_at_k(self.actual, self.predicted, self.k)))
+        print("Recall: {}".format(recall(self.actual, self.predicted)))
+        print("MAP: {}".format(self.average_precision_at_k(self.actual, self.predicted, self.k)))
+        print("MRR: {}".format(self.mean_reciprocal_rank(self.actual, self.predicted)))
+
