@@ -1,4 +1,5 @@
 import os
+import signal
 from collections import defaultdict
 
 import numpy as np
@@ -20,7 +21,69 @@ class Indexer:
         self.document_vectors = None  # Hold document vectors after transformation
         self.storage_manager = StorageManager()
         self.query_processor = QueryProcessor()
+        self.stop_requested = False
+        self.current_position = 0  # Initialize current_position
+        # Set up signal handling
+        signal.signal(signal.SIGINT, self.handle_stop_signal)
+        signal.signal(signal.SIGTERM, self.handle_stop_signal)
 
+    def handle_stop_signal(self, signum, frame):
+        print(f"Signal {signum} received, saving checkpoint and exiting...")
+        self.save_intermediate_results()
+        self.save_checkpoint(self.current_position)
+        self.stop_requested = True
+
+    def save_checkpoint(self, position):
+        checkpoint = {
+            'position': position,
+            'vectorizer': self.vectorizer,
+            'inverted_index': self.inverted_index,
+            'word_list': list(self.word_set)
+        }
+        self.storage_manager.save_checkpoint(checkpoint)
+    def index_documents_from_file_with_stop_signal(self, file_path, batch_size=1000, save_interval=5):
+        checkpoint = self.storage_manager.load_checkpoint()
+        start_position = 0
+        if checkpoint:
+            start_position = checkpoint['position']
+            self.vectorizer = checkpoint['vectorizer']
+            self.inverted_index = checkpoint['inverted_index']
+            self.word_set = set(checkpoint['word_list'])
+
+        self.current_position = start_position  # Set current_position to start_position
+        total_size = os.path.getsize(file_path)
+        with open(file_path, 'r') as f:
+            if start_position > 0:
+                f.seek(start_position)
+            documents = []
+            batch_id = start_position // batch_size
+            char_count = start_position
+            for line in f:
+                if self.stop_requested:
+                    break
+                char_count += len(line)
+                documents.append(json.loads(line))
+                if len(documents) >= batch_size:
+                    self.process_batch(documents, batch_id)
+                    documents = []
+                    batch_id += 1
+
+                    # Update checkpoint
+                    self.current_position = char_count
+                    self.save_checkpoint(self.current_position)
+
+                    if batch_id % save_interval == 0:
+                        self.save_intermediate_results()
+
+                    progress = (char_count / total_size) * 100
+                    print(f"Progress: {progress:.2f}%")
+
+            if documents and not self.stop_requested:
+                self.process_batch(documents, batch_id)
+                self.save_intermediate_results()
+
+            if not self.stop_requested:
+                self.save_final_results()
     def index_documents(self, documents):
         # Create a TF-IDF vectorizer and fit it to the documents
         self.vectorizer = TfidfVectorizer()
@@ -109,7 +172,6 @@ class Indexer:
                     progress = (char_count / total_size) * 100
                     print(f"Progress: {progress:.2f}%")
 
-
             # Process any remaining documents
             if documents:
                 self.process_batch(documents, batch_id)
@@ -119,9 +181,12 @@ class Indexer:
             self.save_final_results()
 
     def process_batch(self, documents, batch_id):
+        document_ids = [doc['_id'] for doc in documents]
+        # Weight factor for the titles
+        title_weight = 3
         preprocessed_documents = [
             self.query_processor.complete_process_query(
-                doc.get('title', '').lower() + " " + doc.get('text', '').lower())
+                title_weight * doc.get('title', ' ').lower() + " " + doc.get('text', '').lower())
             for doc in documents
         ]
         processed_documents = [' '.join(doc) for doc in preprocessed_documents]
@@ -133,25 +198,30 @@ class Indexer:
             batch_vectors = self.vectorizer.transform(processed_documents)
             # new_vectors = self.vectorizer.transform(processed_documents)
             # self.document_vectors = np.vstack([self.document_vectors, new_vectors])
-
-        self.storage_manager.save_batch_document_vectors(batch_vectors, batch_id)
-
-        for doc_id, document in enumerate(processed_documents):
+        self.storage_manager.save_batch_document_vectors_with_id(batch_vectors, batch_id, document_ids)
+        # self.storage_manager.save_batch_document_vectors(batch_vectors, batch_id)
+        for doc_id, document in zip(document_ids, processed_documents):  # Use unique document IDs
             words = document.split()
-            # self.word_list.extend(words)
-            self.word_set.update(words)  # Use set to ensure unique words
-            # print(self.word_set)
-            # print(type(self.word_set))
+            self.word_set.update(words)
 
-            # self.word_set.update(set(['foster','foster33']))
             for word in words:
                 if doc_id not in self.inverted_index[word]:
-                    # self.inverted_index[word].append(doc_id)
-                    self.inverted_index[word].append(batch_id * self.storage_manager.batch_size + doc_id)
+                    self.inverted_index[word].append(doc_id)
+        # for doc_id, document in enumerate(processed_documents):
+        #     words = document.split()
+        #     # self.word_list.extend(words)
+        #     self.word_set.update(words)  # Use set to ensure unique words
+        #     # print(self.word_set)
+        #     # print(type(self.word_set))
+        #
+        #     for word in words:
+        #         if doc_id not in self.inverted_index[word]:
+        #             # self.inverted_index[word].append(batch_id * self.storage_manager.batch_size + doc_id)
 
     def load_all_components(self):
         self.vectorizer = self.storage_manager.load_vectorizer()
-        self.document_vectors = self.storage_manager.load_all_document_vectors()
+        # self.document_vectors = self.storage_manager.load_all_document_vectors()
+        self.document_vectors = self.storage_manager.load_all_document_vectors_with_id()
         self.inverted_index = self.storage_manager.load_inverted_index()
         self.word_set = self.storage_manager.load_vocabulary()
 
@@ -188,6 +258,16 @@ class Indexer:
     def search_vectors(self, query_vector):
         # Calculate cosine similarity between query vector and document vectors
         similarity_scores = cosine_similarity(query_vector, self.document_vectors)
+
+        # Convert similarity scores to a flat list
+        similarity_scores = similarity_scores.flatten()
+
+        # Return similarity scores
+        return similarity_scores
+
+    def search_vectors_ev(self, query_vector, document_vectors):
+        # Calculate cosine similarity between query vector and document vectors
+        similarity_scores = cosine_similarity(query_vector, document_vectors)
 
         # Convert similarity scores to a flat list
         similarity_scores = similarity_scores.flatten()

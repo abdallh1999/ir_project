@@ -70,9 +70,11 @@ class StorageManager:
         file_path = self.base_path + filename
         with open(file_path, 'wb') as file:
             pickle.dump(document_vectors, file)
+
     def batch_file_exists(self, batch_id):
         batch_file = os.path.join(self.document_vectors_dir, f'document_vectors_{batch_id}.pkl')
         return os.path.exists(batch_file)
+
     def load_document_vectors(self, filename='document_vectors.pkl'):
         file_path = self.base_path + filename
         with open(file_path, 'rb') as file:
@@ -101,13 +103,20 @@ class StorageManager:
             vocabulary = [line.strip() for line in file]
         return vocabulary
 
+    # def get_num_batches(self):
+    #     return len(os.listdir(self.document_vectors_dir))
     def get_num_batches(self):
-        return len(os.listdir(self.document_vectors_dir))
+        batch_files = [f for f in os.listdir(self.document_vectors_dir) if
+                       f.startswith('document_vectors_') and f.endswith('.pkl')]
+        if not batch_files:  # If no batch files found, return 0
+            return 0
+        # Extract batch IDs from file names and return the maximum
+        batch_ids = [int(file.split('_')[1].split('.')[0]) for file in batch_files]
+        return max(batch_ids) + 1  # Add 1 to include the maximum batch ID
 
     def load_batch_document_vectors(self, batch_id):
         batch_file = os.path.join(self.document_vectors_dir, f'document_vectors_{batch_id}.pkl')
         if not os.path.exists(batch_file):
-
             raise FileNotFoundError(f"Batch file {batch_file} does not exist")
 
         with open(batch_file, 'rb') as f:
@@ -136,3 +145,42 @@ class StorageManager:
         # Check if files and data structures are empty or contain default values
 
         print("Project reset complete.")
+
+    def save_batch_document_vectors_with_id(self, vectors, batch_id, document_ids):
+        batch_file = os.path.join(self.document_vectors_dir, f'document_vectors_{batch_id}.pkl')
+        with open(batch_file, 'wb') as f:
+            pickle.dump((vectors, document_ids), f)
+
+    def load_batch_document_vectors_with_id(self, batch_id):
+        batch_file = os.path.join(self.document_vectors_dir, f'document_vectors_{batch_id}.pkl')
+        if not os.path.exists(batch_file):
+            raise FileNotFoundError(f"Batch file {batch_file} does not exist")
+        with open(batch_file, 'rb') as f:
+            vectors, document_ids = pickle.load(f)
+        return vectors, document_ids
+
+    def load_all_document_vectors_with_id(self):
+        all_vectors = []
+        all_ids = []
+        max_length = 0
+
+        for batch_file in sorted(os.listdir(self.document_vectors_dir)):
+            with open(os.path.join(self.document_vectors_dir, batch_file), 'rb') as f:
+                batch_vectors, batch_ids = pickle.load(f)  # Unpack the tuple
+                max_length = max(max_length, batch_vectors.shape[1])
+                all_vectors.append(batch_vectors)
+                all_ids.extend(batch_ids)  # Collect all document IDs
+
+        # Pad shorter vectors with zeros to match the length of the longest vector
+        padded_vectors = []
+        for batch_vectors in all_vectors:
+            num_docs, vec_length = batch_vectors.shape
+            if vec_length < max_length:
+                padding = np.zeros((num_docs, max_length - vec_length))
+                batch_vectors = np.hstack((batch_vectors, padding))
+            padded_vectors.append(batch_vectors)
+
+        # Concatenate all batch vectors into a single array
+        document_vectors = np.vstack(padded_vectors)
+
+        return document_vectors, all_ids  # Return both document vectors and document IDs

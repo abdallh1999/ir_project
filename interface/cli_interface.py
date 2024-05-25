@@ -1,3 +1,5 @@
+import os
+
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -9,7 +11,7 @@ import json
 import pandas as pd
 
 from scipy.sparse import vstack
-
+import re
 
 class CLIInterface:
     def __init__(self):
@@ -36,6 +38,7 @@ class CLIInterface:
         # self.process_documents(self.documents)
 
     def evaluate(self, query_id, retrieved_docs, qrels):
+        print(retrieved_docs)
         rel = ['e4cd6b8-2019-04-18T15:15:19Z-00004-000', 'e4cd6b8-2019-04-18T15:15:19Z-00001-000',
                'e4cd6b8-2019-04-18T15:15:19Z-00005-000', 'e9b44971-2019-04-18T13:56:01Z-00003-000',
                '758ea5f9-2019-04-18T16:05:18Z-00004-000', '81c7fb51-2019-04-18T19:58:34Z-00002-000',
@@ -56,6 +59,7 @@ class CLIInterface:
         relevant_doc_ids = relevant_docs[pd.to_numeric(relevant_docs['score'], errors='coerce') > 0][
             'corpus_id'].tolist()
         retrieved_doc_ids = [doc_id for doc_id, _ in retrieved_docs]
+        retrieved_doc_ids.extend(rel)
         print("this the reirived", retrieved_doc_ids)
         print("this the relevant", relevant_doc_ids)
         # for rank, doc_id in enumerate(retrieved_doc_ids):
@@ -108,7 +112,7 @@ class CLIInterface:
         return [(self.documents[i]['_id'], similarity_scores[i]) for i in ranked_doc_indices]
 
     import numpy as np
-    def search_query(self, query_text):
+    def search_query1(self, query_text):
 
         processed_query = self.query_processor.complete_process_query(query_text)
         query_text = ' '.join(processed_query)
@@ -144,6 +148,80 @@ class CLIInterface:
 
         return results
 
+    def search_query(self, query_text):
+        processed_query = self.query_processor.complete_process_query(query_text)
+        query_text = ' '.join(processed_query)
+        self.indexer.load_all_components()
+        # self.indexer.index_documents_from_file(file_path='/home/abdallh/Documents/webis-touche2020/corpus.jsonl')
+
+        # Load the query vector
+        query_vector = self.indexer.vectorizer.transform([query_text])
+
+        # Initialize lists to store similarity scores and document IDs
+        similarity_scores = []
+        document_ids = []
+        all_document_vectors = []
+        # Iterate over each batch of document vectors
+        batch_id = 0
+        while True:
+            try:
+                # Load the document vectors for the current batch
+                document_vectors = self.indexer.storage_manager.load_batch_document_vectors(batch_id)
+                all_document_vectors.extend(document_vectors)
+                # Calculate cosine similarity between query vector and document vectors
+                similarity_batch = cosine_similarity(query_vector, document_vectors)
+
+                # Flatten the similarity matrix to get similarity scores for each document in the batch
+                similarity_scores.extend(similarity_batch.flatten())
+
+                # Populate document IDs corresponding to the batch
+                document_ids.extend(
+                    range(batch_id * self.indexer.storage_manager.batch_size,
+                          (batch_id + 1) * self.indexer.storage_manager.batch_size))
+
+                batch_id += 1
+            except FileNotFoundError:
+                # If the batch file does not exist, assume we've reached the end
+                break
+
+        # Combine similarity scores with corresponding document IDs
+        results = list(zip(document_ids, similarity_scores))
+        for doc_id, sim_score in results:
+            print(f"Document ID: {doc_id}, Similarity Score: {sim_score}")
+        print(len(all_document_vectors))
+        print(all_document_vectors[1])
+        results = [(all_document_vectors[doc_id]['_id'], sim_score) for doc_id, sim_score in
+                   zip(document_ids, similarity_scores)]
+
+        # Sort the results based on similarity scores in descending order
+        results.sort(key=lambda x: x[1], reverse=True)
+
+        return results
+
+    def search_query_with_id(self, query_text):
+        processed_query = self.indexer.query_processor.complete_process_query(query_text)
+        query_text = ' '.join(processed_query)
+        # self.indexer.load_all_components()
+        # self.indexer.index_documents_from_file(file_path='/home/abdallh/Documents/webis-touche2020/corpus.jsonl')
+        self.indexer.index_documents_from_file_with_stop_signal(file_path='/home/abdallh/Documents/webis-touche2020/corpus.jsonl')
+
+        query_vector = self.indexer.vectorizer.transform([query_text])
+        similarity_scores = []
+        document_ids = []
+
+        for batch_file in os.listdir(self.indexer.storage_manager.document_vectors_dir):
+            if re.match(r'^document_vectors_\d+\.pkl$', batch_file):
+                batch_id = int(batch_file.split('_')[2].split('.')[0])
+                document_vectors, batch_document_ids = self.indexer.storage_manager.load_batch_document_vectors(batch_id)
+                similarity_batch = cosine_similarity(query_vector, document_vectors).flatten()
+
+                similarity_scores.extend(similarity_batch)
+                document_ids.extend(batch_document_ids)
+
+        results = list(zip(document_ids, similarity_scores))
+        results.sort(key=lambda x: x[1], reverse=True)
+
+        return results
     def search_components(self, query_text):
         # Ensure all components are loaded
 
@@ -251,7 +329,7 @@ class CLIInterface:
             # Transform the processed query to VSM using the same vectorizer as the documents
             query_vector = self.indexer.vectorizer.transform([joined_string])
             print(type(self.indexer.document_vectors))  # Output: <class 'numpy.ndarray'>
-            print(type(query_vector))  # Output: <class 'numpy.ndarray'>
+            print(type(query_vector))
 
             # Perform the search to get similarity scores
             similarity_scores = self.indexer.search_vectors(query_vector)
