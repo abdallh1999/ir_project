@@ -1,0 +1,4 @@
+/data/document_vectors/
+data/vocabulary.txt
+data/inverted_index.pkl
+data/tfidf_vectorizer.pkl
