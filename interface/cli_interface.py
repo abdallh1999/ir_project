@@ -416,9 +416,9 @@ class CLIInterface:
             #
             #     # print(self.documents[doc_id])
             #     print()
-            for rank, (doc_id, score) in enumerate(ranked_results):
+            for rank, (doc_id, score) in enumerate(ranked_results[:5000]):
                 relevant_idss.append(idss[doc_id])
-            ranked_results_updated = [(idss[doc_id], score) for doc_id, score in ranked_results[:500]]
+            ranked_results_updated = [(idss[doc_id], score) for doc_id, score in ranked_results[:5000]]
 
             return relevant_idss, ranked_results_updated
             # return ranked_results

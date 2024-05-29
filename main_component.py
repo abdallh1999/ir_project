@@ -30,7 +30,7 @@ def main():
     relevant_docs = [line.split()[1] for line in qrels if line.split()[0] == query_id]
     # retrieved_results = interface.search_query_with_id(query_text)
     retrieved_ids, retrieved_results = interface.run_final(query_text)
-    retrieved_docs_id = retrieved_results
+    retrieved_docs_id = retrieved_ids
     matching_documents = interface.get_docs_by_ids('/home/abdallh/Documents/webis-touche2020/corpus.jsonl',
                                                    retrieved_ids)
     for rank, (doc_id, score) in enumerate(retrieved_results[:10]):
