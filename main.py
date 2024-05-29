@@ -15,7 +15,7 @@ def main():
     interface.load_data('/home/abdallh/Documents/webis-touche2020/corpus.jsonl')
     qrels = interface.load_qrels('/home/abdallh/Documents/webis-touche2020/qrels/test.tsv')
     interface.load_queries('/home/abdallh/Documents/webis-touche2020/queries.jsonl')
-    interface.run()
+    interface.search_query_with_id('1')
     # Example of Searching and Evaluating
     # query_id = '35'
     # query_text = interface.queries[query_id]

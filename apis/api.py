@@ -269,6 +269,22 @@ def evaluate_endpoint():
         'documents': retrieved_docs
     }
     return jsonify(response)
+@app.route('/evaluate/all', methods=['POST'])
+def evaluate_all_endpoint():
+    data = request.json
+    query_id = data.get('query_id')
+    query_text = data.get('query_text')
+    k = data.get('k', 10)
+
+    if not query_id or not query_text:
+        return jsonify({'error': 'Query ID and text are required'}), 400
+
+    evaluation_metrics, retrieved_docs = evaluate_api(query_id, query_text, k)
+    response = {
+        'evaluation': evaluation_metrics,
+        'documents': retrieved_docs
+    }
+    return jsonify(response)
 
 
 def read_random_records(file_path, num_records=10):

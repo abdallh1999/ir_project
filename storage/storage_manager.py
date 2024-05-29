@@ -102,6 +102,23 @@ class StorageManager:
         with open(file_path, 'r') as file:
             vocabulary = [line.strip() for line in file]
         return vocabulary
+    def save_processed_docs(self, vocabulary, filename='processed_docs1.txt'):
+        file_path = self.base_path + filename
+        with open(file_path, 'a') as file:
+            for term in vocabulary:
+                print(type(term))
+                print(term)
+                # print("this the term",term,'\n')
+                file.write(f"{term}\n")
+
+    def load_processed_docs(self, filename='processed_docs.txt'):
+        file_path = self.base_path + filename
+        vocabulary = []
+        with open(file_path, 'r') as file:
+            # vocabulary = [print(line.strip()) for line in file]
+            vocabulary = [line.strip() for line in file]
+            # print("this the vocabulary",len(vocabulary))
+        return vocabulary
 
     # def get_num_batches(self):
     #     return len(os.listdir(self.document_vectors_dir))

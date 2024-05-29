@@ -2,3 +2,6 @@
 data/vocabulary.txt
 data/inverted_index.pkl
 data/tfidf_vectorizer.pkl
+data/processed_docs.txt
+data/processed_docs1.txt
+data/document_vectors.pkl

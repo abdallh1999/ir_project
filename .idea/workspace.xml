@@ -4,22 +4,29 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="88a41b4d-c9f4-4745-8e43-7b5d1af4aaba" name="Changes" comment="working code with good architecture">
-      <change afterPath="$PROJECT_DIR$/apis/__init__.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/apis/api.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/main_component.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="88a41b4d-c9f4-4745-8e43-7b5d1af4aaba" name="Changes" comment="final touch">
+      <change afterPath="$PROJECT_DIR$/continue.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/read.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/document_vectors.pkl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/inverted_index.pkl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/tfidf_vectorizer.pkl" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/vocabulary.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/evaluate/evaluate.py" beforeDir="false" afterPath="$PROJECT_DIR$/evaluate/evaluate.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apis/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/apis/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/document_vectors/document_vectors_0.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/data/document_vectors/document_vectors_0.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/document_vectors/document_vectors_1.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/data/document_vectors/document_vectors_1.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/document_vectors/document_vectors_12796.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/data/document_vectors/document_vectors_12796.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/document_vectors/document_vectors_2.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/data/document_vectors/document_vectors_2.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/document_vectors/document_vectors_3.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/data/document_vectors/document_vectors_3.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/document_vectors/document_vectors_4.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/data/document_vectors/document_vectors_4.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/document_vectors/document_vectors_5.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/data/document_vectors/document_vectors_5.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/inverted_index.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/data/inverted_index.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/vocabulary.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/vocabulary.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/file_checkpoint.pkl" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/indexing/indexer.py" beforeDir="false" afterPath="$PROJECT_DIR$/indexing/indexer.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interface/cli_interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/interface/cli_interface.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/query/query_processor.py" beforeDir="false" afterPath="$PROJECT_DIR$/query/query_processor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_component.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_component.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/short_evaluation/short_evaluation.py" beforeDir="false" afterPath="$PROJECT_DIR$/short_evaluation/short_evaluation.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/storage/storage_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/storage/storage_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/utilities.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,18 +60,53 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Python.api.executor": "Run",
     "Python.main.executor": "Run",
     "Python.main1.executor": "Run",
     "Python.main_component.executor": "Run",
+    "Python.read.executor": "Run",
+    "Python.short_evaluation.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "git-widget-placeholder": "semi-ready",
     "last_opened_file_path": "/home/abdallh/PycharmProjects/information_system",
     "run.code.analysis.last.selected.profile": "aDefault",
     "settings.editor.selected.configurable": "preferences.pluginManager"
+  },
+  "keyToStringList": {
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "GitIgnore"
+    ]
   }
 }]]></component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+    </key>
+  </component>
   <component name="RunManager" selected="Python.main_component">
+    <configuration name="api" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="information_system" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/apis" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/apis/api.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
       <module name="information_system" />
       <option name="ENV_FILES" value="" />
@@ -132,14 +174,64 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="read" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="information_system" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/data" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/data/read.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="short_evaluation" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="information_system" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/short_evaluation" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/short_evaluation/short_evaluation.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Python.main" />
       <item itemvalue="Python.main1" />
+      <item itemvalue="Python.read" />
+      <item itemvalue="Python.api" />
       <item itemvalue="Python.main_component" />
+      <item itemvalue="Python.short_evaluation" />
     </list>
     <recent_temporary>
       <list>
         <item itemvalue="Python.main_component" />
+        <item itemvalue="Python.read" />
+        <item itemvalue="Python.api" />
+        <item itemvalue="Python.short_evaluation" />
       </list>
     </recent_temporary>
   </component>
@@ -167,7 +259,15 @@
       <option name="project" value="LOCAL" />
       <updated>1714469821839</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="final touch">
+      <option name="closed" value="true" />
+      <created>1716641163052</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1716641163052</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -195,6 +295,7 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="working code with good architecture" />
-    <option name="LAST_COMMIT_MESSAGE" value="working code with good architecture" />
+    <MESSAGE value="final touch" />
+    <option name="LAST_COMMIT_MESSAGE" value="final touch" />
   </component>
 </project>

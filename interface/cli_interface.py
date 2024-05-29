@@ -1,8 +1,10 @@
 import os
 
 import numpy as np
+from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
+import data.read as r
 from query.query_processor import QueryProcessor
 from indexing.indexer import Indexer
 from ranking.ranker import Ranker
@@ -12,6 +14,7 @@ import pandas as pd
 
 from scipy.sparse import vstack
 import re
+
 
 class CLIInterface:
     def __init__(self):
@@ -36,44 +39,6 @@ class CLIInterface:
         # self.documents = self.load_dataset(file_path)
         self.documents = self.read_jsonl_file(file_path)
         # self.process_documents(self.documents)
-
-    def evaluate(self, query_id, retrieved_docs, qrels):
-        print(retrieved_docs)
-        rel = ['e4cd6b8-2019-04-18T15:15:19Z-00004-000', 'e4cd6b8-2019-04-18T15:15:19Z-00001-000',
-               'e4cd6b8-2019-04-18T15:15:19Z-00005-000', 'e9b44971-2019-04-18T13:56:01Z-00003-000',
-               '758ea5f9-2019-04-18T16:05:18Z-00004-000', '81c7fb51-2019-04-18T19:58:34Z-00002-000',
-               '8294b441-2019-04-18T17:22:30Z-00003-000', '8440ef2-2019-04-18T12:02:18Z-00000-000',
-               'de7919e0-2019-04-18T16:05:16Z-00001-000', '3466ccde-2019-04-18T15:56:31Z-00006-000',
-               '4381b332-2019-04-19T12:47:35Z-00017-000', '45462ad0-2019-04-18T13:17:49Z-00000-000',
-               '55e10797-2019-04-18T15:21:42Z-00006-000', '5b6b2f9-2019-04-18T15:28:19Z-00000-000',
-               'd0e5c093-2019-04-18T18:40:47Z-00005-000', '5dce2de2-2019-04-18T15:41:55Z-00001-000',
-               'a5ca39dc-2019-04-18T11:43:36Z-00005-000', 'b1a6f17a-2019-04-18T15:54:21Z-00002-000',
-               'b1a6f17a-2019-04-18T15:54:21Z-00001-000', 'b4849efd-2019-04-18T17:56:23Z-00002-000',
-               '117d4c1a-2019-04-18T18:37:03Z-00004-000', 'c80f9596-2019-04-18T15:38:23Z-00003-000',
-               'c958dc5a-2019-04-18T17:51:05Z-00001-000', '3307f209-2019-04-18T15:40:14Z-00004-000']
-        relevant_docs = qrels[qrels['query_id'] == query_id]
-        print(relevant_docs)
-        print(relevant_docs[pd.to_numeric(relevant_docs['score'], errors='coerce') > 0])
-        # print(int(relevant_docs['score']))
-        # print(int(relevant_docs['score']) > 0, relevant_docs['score']['corpus_id'])
-        relevant_doc_ids = relevant_docs[pd.to_numeric(relevant_docs['score'], errors='coerce') > 0][
-            'corpus_id'].tolist()
-        retrieved_doc_ids = [doc_id for doc_id, _ in retrieved_docs]
-        retrieved_doc_ids.extend(rel)
-        print("this the reirived", retrieved_doc_ids)
-        print("this the relevant", relevant_doc_ids)
-        # for rank, doc_id in enumerate(retrieved_doc_ids):
-        #     # doc_id = int(doc_id)
-        #     # print(f"Rank {rank + 1}: Document {doc_id + 1}: {documents[doc_id]}")
-        #     # print(self.documents[0])
-        #     self.print_ranked_data(self.documents[doc_id])
-
-        tp = len(set(relevant_doc_ids).intersection(retrieved_doc_ids))
-        print("this the tp:", tp)
-        precision = tp / len(retrieved_doc_ids) if retrieved_doc_ids else 0
-        recall = tp / len(relevant_doc_ids) if relevant_doc_ids else 0
-
-        return precision, recall
 
     def search(self, query_text):
         # self.indexer.index_documents(self.documents)
@@ -203,25 +168,28 @@ class CLIInterface:
         query_text = ' '.join(processed_query)
         # self.indexer.load_all_components()
         # self.indexer.index_documents_from_file(file_path='/home/abdallh/Documents/webis-touche2020/corpus.jsonl')
-        self.indexer.index_documents_from_file_with_stop_signal(file_path='/home/abdallh/Documents/webis-touche2020/corpus.jsonl')
+        self.indexer.index_documents_from_file_with_stop_signal(
+            file_path='/home/abdallh/Documents/webis-touche2020/corpus.jsonl')
 
-        query_vector = self.indexer.vectorizer.transform([query_text])
-        similarity_scores = []
-        document_ids = []
+        # query_vector = self.indexer.vectorizer.transform([query_text])
+        # similarity_scores = []
+        # document_ids = []
+        #
+        # for batch_file in os.listdir(self.indexer.storage_manager.document_vectors_dir):
+        #     if re.match(r'^document_vectors_\d+\.pkl$', batch_file):
+        #         batch_id = int(batch_file.split('_')[2].split('.')[0])
+        #         document_vectors, batch_document_ids = self.indexer.storage_manager.load_batch_document_vectors(
+        #             batch_id)
+        #         similarity_batch = cosine_similarity(query_vector, document_vectors).flatten()
+        #
+        #         similarity_scores.extend(similarity_batch)
+        #         document_ids.extend(batch_document_ids)
+        #
+        # results = list(zip(document_ids, similarity_scores))
+        # results.sort(key=lambda x: x[1], reverse=True)
+        #
+        # return results
 
-        for batch_file in os.listdir(self.indexer.storage_manager.document_vectors_dir):
-            if re.match(r'^document_vectors_\d+\.pkl$', batch_file):
-                batch_id = int(batch_file.split('_')[2].split('.')[0])
-                document_vectors, batch_document_ids = self.indexer.storage_manager.load_batch_document_vectors(batch_id)
-                similarity_batch = cosine_similarity(query_vector, document_vectors).flatten()
-
-                similarity_scores.extend(similarity_batch)
-                document_ids.extend(batch_document_ids)
-
-        results = list(zip(document_ids, similarity_scores))
-        results.sort(key=lambda x: x[1], reverse=True)
-
-        return results
     def search_components(self, query_text):
         # Ensure all components are loaded
 
@@ -381,6 +349,80 @@ class CLIInterface:
 
             # return ranked_results
 
+    def run_final(self, query_text):
+        # if not self.indexer.document_vectors:
+        # self.indexer.index_documents(self.documents)
+
+        # documents = self.indexer.storage_manager.load_processed_docs()
+        documents = r.read_and_process_file(
+            file_path='/home/abdallh/PycharmProjects/information_system/data/processed_docs.txt')
+        self.documents = r.get_second_values_from_tuples(documents)
+        idss = r.get_first_values_from_tuples(documents)
+        relevant_idss = []
+        # self.documents = self.indexer.storage_manager.load_processed_docs()
+        # self.indexer.vectorizer = self.indexer.storage_manager.load_vectorizer()
+        # self.indexer.document_vectors = self.indexer.storage_manager.load_document_vectors()
+        self.indexer.vectorizer = TfidfVectorizer()
+        self.indexer.document_vectors = self.indexer.vectorizer.fit_transform(self.documents)
+        # # Save the vectorizer and document vectors
+        # self.indexer.storage_manager.save_vectorizer(self.indexer.vectorizer)
+        # self.indexer.storage_manager.save_document_vectors(self.indexer.document_vectors)
+
+        while True:
+            query = input("\nEnter your search query (or 'exit' to quit): ")
+            if query.lower() == 'exit':
+                break
+            # Process the query
+            # processed_query = self.query_processor.process_query(query)
+            processed_query = self.query_processor.complete_process_query(query_text)
+            # Join the list of strings into a single string
+            joined_string = " ".join(processed_query)
+            print(joined_string)
+            # Transform the processed query to VSM using the same vectorizer as the documents
+            query_vector = self.indexer.vectorizer.transform([joined_string])
+            # print(type(self.indexer.document_vectors))  # Output: <class 'numpy.ndarray'>
+            # print(type(query_vector))
+
+            # Perform the search to get similarity scores
+            similarity_scores = self.indexer.search_vectors(query_vector)
+            # print("Query Vector Shape:", query_vector.shape)
+            # # Print the shape of the document vectors
+            # print("Document Vectors Shape:", self.indexer.document_vectors.shape[0])
+            # print("Document Vectors Shape:", self.indexer.document_vectors.shape)
+
+            # Rank the results based on similarity scores
+            # ranked_results = self.ranker.rank_vectors_results(similarity_scores)
+            # print("this the similarity score:", similarity_scores)
+            # print(ranked_results)
+            # if top_similarity_score ==0:
+            #     # If the top score is below the threshold, return an unsure message
+            #     print("The system is unsure about the query. No relevant documents found.")
+            #     # return "The system is unsure about the query. No relevant documents found."
+            # else:
+            # print("\nSearch Results (ranked by relevance):")
+            # for rank, doc_id in enumerate(ranked_results[:10]):
+            #     self.print_ranked_data(self.documents[doc_id])
+
+            ranked_results = self.ranker.rank_vectors_results_reutrn_tuples(similarity_scores)
+            # print(ranked_results)
+
+            # # Print top-k ranked documents
+            # top_k = 10
+            # for rank, (doc_id, score) in enumerate(ranked_results[:top_k]):
+            #     print(f"Rank {rank + 1}: Document {doc_id + 1}, Similarity Score: {score}")
+            #     print("doc unique id", idss[doc_id])
+            #     print(self.documents[doc_id])
+            #     # self.print_ranked_data(self.documents[doc_id])
+            #
+            #     # print(self.documents[doc_id])
+            #     print()
+            for rank, (doc_id, score) in enumerate(ranked_results):
+                relevant_idss.append(idss[doc_id])
+            ranked_results_updated = [(idss[doc_id], score) for doc_id, score in ranked_results[:500]]
+
+            return relevant_idss, ranked_results_updated
+            # return ranked_results
+
     def load_dataset(self, file_path):
         tree = ET.parse(file_path)
         root = tree.getroot()
@@ -405,8 +447,8 @@ class CLIInterface:
             # Read each line from the file
             for line in file:
                 x += 1
-                if x > 100:
-                    break
+                # if x > 100:
+                #     break
                 print(x)
                 # Parse the line as a JSON object
                 doc = json.loads(line)
@@ -438,7 +480,8 @@ class CLIInterface:
     def print_ranked_data(self, doc):
         # Process each document as needed for your IR system
         # Extract document fields
-
+        print(type(doc))
+        print(doc)
         doc_id = doc.get('_id')
         doc_title = doc.get('title')
         doc_text = doc.get('text')
@@ -453,3 +496,19 @@ class CLIInterface:
         print(f"Text: {doc_text[:100]}...")  # Print the first 100 characters of the text
         print(f"Metadata: {doc_metadata}")
         print()
+
+    def read_file(self, file_path):
+        with open(file_path, 'r') as file:
+            lines = file.readlines()
+        return lines
+
+    def get_docs_by_ids(self, file_path, ids):
+        lines = self.read_file(file_path)
+        matching_docs = []
+
+        for line in lines:
+            doc = json.loads(line)
+            if doc['_id'] in ids:
+                matching_docs.append(doc)
+
+        return matching_docs
