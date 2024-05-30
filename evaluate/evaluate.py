@@ -83,12 +83,16 @@ class Evaluate:
                 return 1 / (i + 1)
         return 0
 
-    def print_all(self):
-        print("Precision@{}: {}".format(self.k, self.precision_at_k(self.actual, self.predicted, self.k)))
-        print("Recall: {}".format(self.recall(self.actual, self.predicted)))
-        print("MAP: {}".format(self.average_precision_at_k(self.actual, self.predicted, self.k)))
-        print("MRR: {}".format(self.mean_reciprocal_rank(self.actual, self.predicted)))
+    def f1_score(self, precision, recall):
+        if precision + recall == 0:
+            return 0.0
+        return 2 * (precision * recall) / (precision + recall)
 
+    # def print_all(self):
+    #     print("Precision@{}: {}".format(self.k, self.precision_at_k(self.actual, self.predicted, self.k)))
+    #     print("Recall: {}".format(self.recall(self.actual, self.predicted)))
+    #     print("MAP: {}".format(self.average_precision_at_k(self.actual, self.predicted, self.k)))
+    #     print("MRR: {}".format(self.mean_reciprocal_rank(self.actual, self.predicted)))
     def get_metrics(self):
         metrics = {
             'precision_at_k': self.precision_at_k(self.actual, self.predicted, self.k),
@@ -97,3 +101,19 @@ class Evaluate:
             'MRR': self.mean_reciprocal_rank(self.actual, self.predicted)
         }
         return metrics
+
+    def calculate_metrics(self):
+        precision = self.precision_at_k(self.actual, self.predicted, self.k)
+        recall = self.recall(self.actual, self.predicted)
+        f1 = self.f1_score(precision, recall)
+        return precision, recall, f1
+
+    def print_all(self):
+        precision = self.precision_at_k(self.actual, self.predicted, self.k)
+        recall = self.recall(self.actual, self.predicted)
+        f1 = self.f1_score(precision, recall)
+        print("Precision@{}: {}".format(self.k, precision))
+        print("Recall: {}".format(recall))
+        print("F1 Score: {}".format(f1))
+        print("MAP: {}".format(self.average_precision_at_k(self.actual, self.predicted, self.k)))
+        print("MRR: {}".format(self.mean_reciprocal_rank(self.actual, self.predicted)))

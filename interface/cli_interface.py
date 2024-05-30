@@ -360,18 +360,20 @@ class CLIInterface:
         idss = r.get_first_values_from_tuples(documents)
         relevant_idss = []
         # self.documents = self.indexer.storage_manager.load_processed_docs()
-        # self.indexer.vectorizer = self.indexer.storage_manager.load_vectorizer()
-        # self.indexer.document_vectors = self.indexer.storage_manager.load_document_vectors()
-        self.indexer.vectorizer = TfidfVectorizer()
-        self.indexer.document_vectors = self.indexer.vectorizer.fit_transform(self.documents)
+        self.indexer.vectorizer = self.indexer.storage_manager.load_vectorizer()
+        self.indexer.document_vectors = self.indexer.storage_manager.load_document_vectors()
+        # self.indexer.vectorizer = TfidfVectorizer()
+        # self.indexer.vectorizer = TfidfVectorizer(max_df=0.95, min_df=2, max_features=10000)
+
+        # self.indexer.document_vectors = self.indexer.vectorizer.fit_transform(self.documents)
         # # Save the vectorizer and document vectors
         # self.indexer.storage_manager.save_vectorizer(self.indexer.vectorizer)
         # self.indexer.storage_manager.save_document_vectors(self.indexer.document_vectors)
 
         while True:
-            query = input("\nEnter your search query (or 'exit' to quit): ")
-            if query.lower() == 'exit':
-                break
+            # query = input("\nEnter your search query (or 'exit' to quit): ")
+            # if query.lower() == 'exit':
+            #     break
             # Process the query
             # processed_query = self.query_processor.process_query(query)
             processed_query = self.query_processor.complete_process_query(query_text)
@@ -416,9 +418,9 @@ class CLIInterface:
             #
             #     # print(self.documents[doc_id])
             #     print()
-            for rank, (doc_id, score) in enumerate(ranked_results[:5000]):
+            for rank, (doc_id, score) in enumerate(ranked_results[:10000]):
                 relevant_idss.append(idss[doc_id])
-            ranked_results_updated = [(idss[doc_id], score) for doc_id, score in ranked_results[:5000]]
+            ranked_results_updated = [(idss[doc_id], score) for doc_id, score in ranked_results[:10000]]
 
             return relevant_idss, ranked_results_updated
             # return ranked_results
@@ -480,8 +482,8 @@ class CLIInterface:
     def print_ranked_data(self, doc):
         # Process each document as needed for your IR system
         # Extract document fields
-        print(type(doc))
-        print(doc)
+        # print(type(doc))
+        # print(doc)
         doc_id = doc.get('_id')
         doc_title = doc.get('title')
         doc_text = doc.get('text')
@@ -502,13 +504,26 @@ class CLIInterface:
             lines = file.readlines()
         return lines
 
-    def get_docs_by_ids(self, file_path, ids):
-        lines = self.read_file(file_path)
-        matching_docs = []
+    # def get_docs_by_ids(self, file_path, ids):
+    #     lines = self.read_file(file_path)
+    #     matching_docs = []
+    #
+    #     for line in lines:
+    #         doc = json.loads(line)
+    #         if doc['_id'] in ids:
+    #             matching_docs.append(doc)
+    #
+    #     return matching_docs
 
-        for line in lines:
-            doc = json.loads(line)
-            if doc['_id'] in ids:
-                matching_docs.append(doc)
-
-        return matching_docs
+    def get_docs_by_ids(self,file_path, document_ids):
+        matching_documents = {}
+        with open(file_path, 'r') as file:
+            for line in file:
+                doc = json.loads(line)
+                doc_id = doc['_id']
+                if doc_id in document_ids:
+                    matching_documents[doc_id] = doc
+                    # If all document IDs have been found, break the loop
+                    if len(matching_documents) == len(document_ids):
+                        break
+        return matching_documents

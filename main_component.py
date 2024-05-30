@@ -7,7 +7,16 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 from sklearn.feature_extraction.text import TfidfVectorizer
 
+def get_all_relevant_docs(query_ids, qrels):
+    """
+    Given a list of query IDs and qrels dataframe, return a list of all relevant document IDs.
 
+    :param query_ids: List of query IDs
+    :param qrels: DataFrame of qrel lines with columns ['query_id', 'corpus_id', 'score']
+    :return: List of all relevant document IDs
+    """
+    relevant_docs = qrels[qrels['query_id'].isin(query_ids)]['corpus_id'].tolist()
+    return relevant_docs
 def filter_documents_by_ids(documents, ids):
     return [doc for doc in documents if doc['_id'] in ids]
 
@@ -21,8 +30,12 @@ def main():
     qrels = interface.load_qrels('/home/abdallh/Documents/webis-touche2020/qrels/test.tsv')
     interface.load_queries('/home/abdallh/Documents/webis-touche2020/queries.jsonl')
     # interface.run()
+    query_ids = list(interface.queries.keys())
+    all_relevant_docs = get_all_relevant_docs(query_ids, qrels)
+    print(len(all_relevant_docs))
+    print(all_relevant_docs)
     # Example of Searching and Evaluating
-    query_id = '1'
+    query_id = '13'
     query_text = interface.queries[query_id]
     with open('/home/abdallh/Documents/webis-touche2020/qrels/test.tsv', 'r') as f:
         qrels = f.readlines()
@@ -33,16 +46,26 @@ def main():
     retrieved_docs_id = retrieved_ids
     matching_documents = interface.get_docs_by_ids('/home/abdallh/Documents/webis-touche2020/corpus.jsonl',
                                                    retrieved_ids)
+    # print(matching_documents)
+    # print(type(matching_documents))
     for rank, (doc_id, score) in enumerate(retrieved_results[:10]):
-        if doc_id in matching_documents:
-            document = matching_documents[doc_id]
+        # if doc_id in matching_documents['_id']:
+        document = matching_documents.get(doc_id)
+
+        if document:
+            # document = matching_documents[doc_id]
+            # print(doc_id)
             print(f"Rank {rank + 1}: Document {doc_id}, Similarity Score: {score}")
-            interface.print_ranked_data(document[doc_id])
+            interface.print_ranked_data(document)
+            # print(doc_id)
+        else:
+            print(f"Rank {rank + 1}: Document {doc_id} not found")
 
-        # self.print_ranked_data(self.documents[doc_id])
+    # self.print_ranked_data(self.documents[doc_id])
 
-        # print(self.documents[doc_id])
-        print()
+    # print(self.documents[doc_id])
+    print()
+
 
     print("this query", query_text)
     # Extract the document IDs from retrieved_results
