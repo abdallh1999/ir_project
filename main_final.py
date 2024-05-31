@@ -46,7 +46,8 @@ def main():
         for line in qrels:
             parts = line.split()
             query_id_str = str(query_id)  # Convert query_id to string for comparison
-            if parts[0] == query_id_str and float(parts[2]) > 0:  # Check if score is greater than zero
+            # if parts[0] == query_id_str and float(parts[2]) > 0:  # Check if score is greater than zero
+            if parts[0] == query_id_str:  # Check if score is greater than zero
                 relevant_docs.append(parts[1])
         # print("Relevant Docs:", relevant_docs)
 
@@ -75,10 +76,10 @@ def main():
         total_precision += precision
         total_recall += recall
         total_f1 += f1
-
+        e.print_all()
         # Print metrics for the current query
-        print(f"Query ID: {query_id}")
-        print(f"Precision: {precision}, Recall: {recall}, F1: {f1}")
+        # print(f"Query ID: {query_id}")
+        # print(f"Precision: {precision}, Recall: {recall}, F1: {f1}")
         print()
         # break
 

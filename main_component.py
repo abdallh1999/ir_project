@@ -35,7 +35,7 @@ def main():
     print(len(all_relevant_docs))
     print(all_relevant_docs)
     # Example of Searching and Evaluating
-    query_id = '13'
+    query_id = '2'
     query_text = interface.queries[query_id]
     with open('/home/abdallh/Documents/webis-touche2020/qrels/test.tsv', 'r') as f:
         qrels = f.readlines()

@@ -6,3 +6,4 @@ data/processed_docs.txt
 data/processed_docs1.txt
 data/document_vectors.pkl
 file_checkpoint.pkl
+relevant_docs/

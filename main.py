@@ -1,4 +1,4 @@
-from interface.cli_interface import CLIInterface
+# from interface.cli_interface import CLIInterface
 # import nltk
 # from nltk.corpus import brown
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -10,12 +10,12 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 # /home/abdallh/Documents/webis-touche2020/
 # remember to give the title priority over the text in the search
 # tune the model to this need
-def main():
-    interface = CLIInterface()
-    interface.load_data('/home/abdallh/Documents/webis-touche2020/corpus.jsonl')
-    qrels = interface.load_qrels('/home/abdallh/Documents/webis-touche2020/qrels/test.tsv')
-    interface.load_queries('/home/abdallh/Documents/webis-touche2020/queries.jsonl')
-    interface.search_query_with_id('1')
+# def main():
+#     interface = CLIInterface()
+#     interface.load_data('/home/abdallh/Documents/webis-touche2020/corpus.jsonl')
+#     qrels = interface.load_qrels('/home/abdallh/Documents/webis-touche2020/qrels/test.tsv')
+#     interface.load_queries('/home/abdallh/Documents/webis-touche2020/queries.jsonl')
+#     interface.search_query_with_id('1')
     # Example of Searching and Evaluating
     # query_id = '35'
     # query_text = interface.queries[query_id]
@@ -23,11 +23,90 @@ def main():
     # precision, recall = interface.evaluate(query_id, retrieved_docs, qrels)
     #
     # print(f"Precision: {precision}, Recall: {recall}")
+import ir_datasets
+import os
 
+# Load the dataset
+dataset = ir_datasets.load("clinicaltrials/2021/trec-ct-2021")
 
-if __name__ == '__main__':
-    main()
+# Step 2: Iterate through queries and store them
+queries = {query.query_id: query.text for query in dataset.queries_iter()}
+print("Queries loaded:", queries)
 
+# Step 3: Extract relevant document IDs from qrels
+qrels = {}
+for qrel in dataset.qrels_iter():
+    if qrel.query_id not in qrels:
+        qrels[qrel.query_id] = []
+    qrels[qrel.query_id].append(qrel.doc_id)
+
+print("Qrels loaded:", qrels)
+
+# Step 4: Retrieve and read only relevant documents
+# Set to store unique relevant document IDs
+relevant_doc_ids = set()
+for doc_ids in qrels.values():
+    relevant_doc_ids.update(doc_ids)
+
+# Dictionary to store the relevant documents
+relevant_docs = {query_id: [] for query_id in queries.keys()}
+
+# Iterate through the dataset and collect relevant documents
+for doc in dataset.docs_iter():
+    if doc.doc_id in relevant_doc_ids:
+        for query_id, doc_ids in qrels.items():
+            if doc.doc_id in doc_ids:
+                relevant_docs[query_id].append(doc)
+
+# Step 5: Write relevant documents to files
+# Create output directory if it doesn't exist
+output_dir = "relevant_docs"
+os.makedirs(output_dir, exist_ok=True)
+
+for query_id, docs in relevant_docs.items():
+    query_output_path = os.path.join(output_dir, f"query_{query_id}.txt")
+    with open(query_output_path, 'w', encoding='utf-8') as file:
+        file.write(f"Query ID: {query_id}\nQuery: {queries[query_id]}\n\n")
+        for doc in docs:
+            file.write(f"Document ID: {doc.doc_id}\n")
+            file.write(f"Title: {doc.title}\n")
+            file.write(f"Condition: {doc.condition}\n")
+            file.write(f"Summary: {doc.summary}\n")
+            file.write(f"Detailed Description: {doc.detailed_description}\n")
+            file.write(f"Eligibility: {doc.eligibility}\n")
+            file.write("\n" + "="*80 + "\n\n")
+
+print("Relevant documents saved.")
+
+# Step 5: Write relevant documents to files
+# Create output directory if it doesn't exist
+output_dir = "relevant_docs"
+os.makedirs(output_dir, exist_ok=True)
+
+for query_id, docs in relevant_docs.items():
+    query_output_dir = os.path.join(output_dir, f"query_{query_id}")
+    os.makedirs(query_output_dir, exist_ok=True)
+    for doc in docs:
+        doc_path = os.path.join(query_output_dir, f"{doc.doc_id}.txt")
+        with open(doc_path, 'w', encoding='utf-8') as file:
+            file.write(doc.title)
+
+print("Relevant documents saved.")
+
+# import ir_datasets
+#
+# if __name__ == '__main__':
+#     # main()
+#
+#     dataset = ir_datasets.load("clinicaltrials/2021/trec-ct-2021")
+#     for doc in dataset.docs_iter():
+#         print(doc)
+#     for query in dataset.queries_iter():
+#         query  # namedtuple<query_id, text>
+#         print(query)
+#     for qrel in dataset.qrels_iter():
+#         qrel  # namedtuple<query_id, doc_id, relevance, iteration>
+#         print(qrel)
     # # Sample data
     # documents = [
     #     "Apple is a fruit.",
@@ -64,3 +143,5 @@ if __name__ == '__main__':
     # print(dict(zip(vocabulary, query_tfidf_values)))
 
     # nltk.download()
+
+

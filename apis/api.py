@@ -185,8 +185,8 @@ def get_files():
 
 @app.route('/search/all', methods=['POST'])
 def search_endpoint_all():
-    # from interface.cli_interface import CLIInterface
-    # interface = CLIInterface()
+    from interface.cli_interface import CLIInterface
+    interface = CLIInterface()
     # # interface.load_data('/home/abdallh/Documents/webis-touche2020/corpus.jsonl')
     # qrels = interface.load_qrels('/home/abdallh/Documents/webis-touche2020/qrels/test.tsv')
     # interface.load_queries('/home/abdallh/Documents/webis-touche2020/queries.jsonl')
@@ -200,9 +200,22 @@ def search_endpoint_all():
     # print(f"Precision: {precision}, Recall: {recall}")
 
     query_text = request.json['query']
-    selected_doc_ids = request.json.get('selected_doc_ids', [])
-    ranked_docs = search(query_text, selected_doc_ids)
-    return jsonify(ranked_docs)
+    retrieved_ids, retrieved_results = interface.run_final(query_text=query_text)
+    matching_documents = interface.get_docs_by_ids('/home/abdallh/Documents/webis-touche2020/corpus.jsonl',
+                                                   retrieved_ids)
+    docs=[]
+    for rank, (doc_id, score) in enumerate(retrieved_results[:20]):
+        document = matching_documents.get(doc_id)
+        if document:
+            docs.append(document)
+            print(f"Rank {rank + 1}: Document {doc_id}, Similarity Score: {score}")
+            interface.print_ranked_data(document)
+        else:
+            print(f"Rank {rank + 1}: Document {doc_id} not found")
+
+    # selected_doc_ids = request.json.get('selected_doc_ids', [])
+    # ranked_docs = search(query_text, selected_doc_ids)
+    return jsonify(docs)
 
 
 def read_records_from_files(file_paths, relevant_document_ids):

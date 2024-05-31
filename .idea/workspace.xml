@@ -5,17 +5,22 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="88a41b4d-c9f4-4745-8e43-7b5d1af4aaba" name="Changes" comment="final touch">
+      <change afterPath="$PROJECT_DIR$/evaluate/api.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/glue_apis.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/indexing/api.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/interface/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/information_system.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/information_system.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/document_vectors/document_vectors_0.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/data/document_vectors/document_vectors_0.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/document_vectors/document_vectors_1.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/data/document_vectors/document_vectors_1.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/document_vectors/document_vectors_2.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/data/document_vectors/document_vectors_2.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/document_vectors/document_vectors_3.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/data/document_vectors/document_vectors_3.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/document_vectors/document_vectors_4.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/data/document_vectors/document_vectors_4.pkl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/inverted_index.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/data/inverted_index.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apis/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/apis/api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/tfidf_vectorizer.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/data/tfidf_vectorizer.pkl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/vocabulary.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/vocabulary.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/file_checkpoint.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/file_checkpoint.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main_component.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_component.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_final.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_final.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output_file.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output_file.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/utils/utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/utilities.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +58,9 @@
     &quot;Python.main.executor&quot;: &quot;Run&quot;,
     &quot;Python.main1.executor&quot;: &quot;Run&quot;,
     &quot;Python.main_component.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main_final.executor&quot;: &quot;Run&quot;,
     &quot;Python.read.executor&quot;: &quot;Run&quot;,
+    &quot;Python.read_2000.executor&quot;: &quot;Run&quot;,
     &quot;Python.short_evaluation.executor&quot;: &quot;Run&quot;,
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
@@ -163,6 +170,28 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
+    <configuration name="main_final" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+      <module name="information_system" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_final.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="read" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="information_system" />
       <option name="ENV_FILES" value="" />
@@ -185,7 +214,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="short_evaluation" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="read_2000" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="information_system" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -194,11 +223,11 @@
         <env name="PYTHONUNBUFFERED" value="1" />
       </envs>
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/short_evaluation" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/short_evaluation/short_evaluation.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/read_2000.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -208,19 +237,21 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.api" />
-      <item itemvalue="Python.main1" />
       <item itemvalue="Python.main" />
-      <item itemvalue="Python.main_component" />
+      <item itemvalue="Python.main1" />
+      <item itemvalue="Python.main_final" />
+      <item itemvalue="Python.read_2000" />
       <item itemvalue="Python.read" />
-      <item itemvalue="Python.short_evaluation" />
+      <item itemvalue="Python.api" />
+      <item itemvalue="Python.main_component" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.main_final" />
         <item itemvalue="Python.main_component" />
+        <item itemvalue="Python.read_2000" />
         <item itemvalue="Python.read" />
         <item itemvalue="Python.api" />
-        <item itemvalue="Python.short_evaluation" />
       </list>
     </recent_temporary>
   </component>
