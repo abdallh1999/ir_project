@@ -1,5 +1,6 @@
 import os
 import signal
+import sys
 from collections import defaultdict
 
 import numpy as np
@@ -16,7 +17,7 @@ class Indexer:
         self.inverted_index = defaultdict(list)
         self.word_list = []
         self.word_set = set('test')
-
+        self.processed_docs = []
         self.vectorizer = None  # Hold a reference to the TF-IDF vectorizer
         self.document_vectors = None  # Hold document vectors after transformation
         self.storage_manager = StorageManager()
@@ -40,7 +41,10 @@ class Indexer:
             'inverted_index': self.inverted_index,
             'word_list': list(self.word_set)
         }
+        print("Size of your_variable:", sys.getsizeof(self.vectorizer), "bytes")
+
         self.storage_manager.save_checkpoint(checkpoint)
+
     def index_documents_from_file_with_stop_signal(self, file_path, batch_size=1000, save_interval=5):
         checkpoint = self.storage_manager.load_checkpoint()
         start_position = 0
@@ -49,7 +53,11 @@ class Indexer:
             self.vectorizer = checkpoint['vectorizer']
             self.inverted_index = checkpoint['inverted_index']
             self.word_set = set(checkpoint['word_list'])
-
+            print(checkpoint['vectorizer'])
+            print("Size of your_variable:", sys.getsizeof(start_position), "bytes")
+            print("Size of your_variable:", sys.getsizeof(self.vectorizer), "bytes")
+            print("Size of your_variable:", sys.getsizeof(self.inverted_index), "bytes")
+            print("Size of your_variable:", sys.getsizeof(self.word_set), "bytes")
         self.current_position = start_position  # Set current_position to start_position
         total_size = os.path.getsize(file_path)
         with open(file_path, 'r') as f:
@@ -81,9 +89,11 @@ class Indexer:
             if documents and not self.stop_requested:
                 self.process_batch(documents, batch_id)
                 self.save_intermediate_results()
+                print('done')
 
             if not self.stop_requested:
                 self.save_final_results()
+
     def index_documents(self, documents):
         # Create a TF-IDF vectorizer and fit it to the documents
         self.vectorizer = TfidfVectorizer()
@@ -163,6 +173,7 @@ class Indexer:
                         'inverted_index': self.inverted_index,
                         'word_list': self.word_set
                     }
+
                     self.storage_manager.save_checkpoint(checkpoint)
 
                     if batch_id % save_interval == 0:
@@ -182,22 +193,61 @@ class Indexer:
 
     def process_batch(self, documents, batch_id):
         document_ids = [doc['_id'] for doc in documents]
+
         # Weight factor for the titles
-        title_weight = 3
-        preprocessed_documents = [
-            self.query_processor.complete_process_query(
-                title_weight * doc.get('title', ' ').lower() + " " + doc.get('text', '').lower())
-            for doc in documents
-        ]
-        processed_documents = [' '.join(doc) for doc in preprocessed_documents]
+        title_weight = 4
+        # self.processed_docs
+        for doc in documents:
+            doc_id = doc.get('_id')  # Assuming '_id' is the key for document ID
+            processed_text = self.query_processor.complete_process_query(
+                title_weight * (doc.get('title', ' ').lower() + " ") + doc.get('text', '').lower()
+            )
+
+            processed_text = ' '.join(processed_text)
+            self.processed_docs.append((doc_id, processed_text))
+
+        # preprocessed_documents = [
+        #     zip(doc.get('_id'), self.query_processor.complete_process_query(
+        #         title_weight * (doc.get('title', ' ').lower() + " ") + doc.get('text', '').lower()))
+        #     for doc in documents
+        #
+        #     # self.query_processor.complete_process_query(
+        #     #     title_weight * (doc.get('title', ' ').lower() + " ") + doc.get('text', '').lower())
+        #     # for doc in documents
+        # ]
+        # print(preprocessed_documents)
+        # for z in preprocessed_documents[:1]:
+        #     print("this is the z", z)
+        #     for idd, text in z:
+        #         ' '.join(text)
+        #         print("this the id:", idd)
+        #         print("this the text:", text)
+        # retrieved_ids = [print(id) for id,text in doc_id  doc_id for doc_id in preprocessed_documents[:50]]
+        # print(retrieved_ids)
+        processed_documents = []
+        for doc_id, processed_text in self.processed_docs:
+            processed_documents.append(processed_text)
+            # Access each value
+            # print(f'Document ID: {doc_id}')
+            # print(f'Processed Text: {processed_text}')
+            # processed_documents = [' '.join(doc) for doc_id, doc in preprocessed_documents]
 
         if not self.vectorizer:
             self.vectorizer = TfidfVectorizer()
+            print('created again')
+            # self.vectorizer = TfidfVectorizer(max_df=0.95, min_df=2, max_features=10000)
             batch_vectors = self.vectorizer.fit_transform(processed_documents)
         else:
             batch_vectors = self.vectorizer.transform(processed_documents)
             # new_vectors = self.vectorizer.transform(processed_documents)
             # self.document_vectors = np.vstack([self.document_vectors, new_vectors])
+        # self.processed_docs = processed_documents
+        # print(self.processed_docs.count())
+        # self.processed_docs.
+        # self.storage_manager.save_vectorizer(self.vectorizer)
+        self.storage_manager.save_processed_docs(self.processed_docs)
+        self.processed_docs.clear()
+        # self.processed_docs.clear()
         self.storage_manager.save_batch_document_vectors_with_id(batch_vectors, batch_id, document_ids)
         # self.storage_manager.save_batch_document_vectors(batch_vectors, batch_id)
         for doc_id, document in zip(document_ids, processed_documents):  # Use unique document IDs
@@ -207,6 +257,10 @@ class Indexer:
             for word in words:
                 if doc_id not in self.inverted_index[word]:
                     self.inverted_index[word].append(doc_id)
+
+        processed_documents.clear()
+        document_ids.clear()
+
         # for doc_id, document in enumerate(processed_documents):
         #     words = document.split()
         #     # self.word_list.extend(words)
@@ -227,13 +281,20 @@ class Indexer:
 
     def save_intermediate_results(self):
         self.storage_manager.save_vectorizer(self.vectorizer)
+        self.storage_manager.save_processed_docs(self.processed_docs)
         self.storage_manager.save_inverted_index(self.inverted_index)
         self.storage_manager.save_vocabulary(list(self.word_set))
+        self.processed_docs.clear()
+        print('ineter')
 
     def save_final_results(self):
         self.storage_manager.save_vectorizer(self.vectorizer)
+        self.storage_manager.save_processed_docs(self.processed_docs)
+
         self.storage_manager.save_inverted_index(self.inverted_index)
         self.storage_manager.save_vocabulary(list(self.word_set))
+        self.processed_docs.clear()
+
         # Optionally remove checkpoint after final save
         if os.path.exists(self.storage_manager.checkpoint_file):
             os.remove(self.storage_manager.checkpoint_file)
