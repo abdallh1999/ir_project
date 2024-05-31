@@ -1,5 +1,6 @@
 import json
 import random
+import sys
 from collections import defaultdict
 
 from sklearn.feature_extraction.text import TfidfVectorizer
@@ -30,7 +31,8 @@ def index_documents(documents):
     global query_processor
     global inverted_index
     global word_set
-    vectorizer = TfidfVectorizer()
+    vectorizer = TfidfVectorizer(max_df=0.95, min_df=2, max_features=10000)
+    # vectorizer = TfidfVectorizer()
     # Tokenize and preprocess documents
     # Weight factor for the titles
     title_weight = 3
@@ -136,6 +138,8 @@ def evaluate_api(query_id, query_text, k=10):
     similarity_scores = indexer.search_vectors_ev(query_vector, documents_vectors)
     retrieved_results = ranker.rank_vectors_results_reutrn_tuples(similarity_scores)
     print(retrieved_results)
+    print("Size of your_variable:", sys.getsizeof(vectorizer), "bytes")
+
     retrieved_docs = [
         {
             '_id': text_to_be_processed[doc_id]['_id'],
@@ -266,7 +270,7 @@ def read_records_from_corpus(corpus_file, relevant_document_ids):
     with open(corpus_file, 'r', encoding='utf-8') as f:
         for line in f:
             record = json.loads(line)
-            if len(records) <= 200 + len(relevant_document_ids):
+            if len(records) <= 500 + len(relevant_document_ids):
                 records.append(record)
                 # print(len(records))
             else:
