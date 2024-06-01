@@ -102,7 +102,7 @@ class StorageManager:
         with open(file_path, 'r') as file:
             vocabulary = [line.strip() for line in file]
         return vocabulary
-    def save_processed_docs(self, vocabulary, filename='processed_docs.txt'):
+    def save_processed_docs(self, vocabulary, filename='processed_docs_dataset2.txt'):
         file_path = self.base_path + filename
         with open(file_path, 'a') as file:
             for term in vocabulary:
