@@ -5,21 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="88a41b4d-c9f4-4745-8e43-7b5d1af4aaba" name="Changes" comment="final touch">
-      <change afterPath="$PROJECT_DIR$/evaluate/api.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/glue_apis.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/indexing/api.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/interface/api.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/information_system.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/information_system.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/apis/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/apis/api.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/tfidf_vectorizer.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/data/tfidf_vectorizer.pkl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/vocabulary.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/vocabulary.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/file_checkpoint.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/file_checkpoint.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/interface/cli_interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/interface/cli_interface.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_component.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_component.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main_final.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_final.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/output_file.txt" beforeDir="false" afterPath="$PROJECT_DIR$/output_file.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/storage/storage_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/storage/storage_manager.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/utils/utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/utilities.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

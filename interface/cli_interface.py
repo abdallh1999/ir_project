@@ -14,6 +14,8 @@ import pandas as pd
 
 from scipy.sparse import vstack
 import re
+import ir_datasets
+import os
 
 
 class CLIInterface:
@@ -270,13 +272,7 @@ class CLIInterface:
     def run(self):
         print("Welcome to the Information Retrieval System!")
 
-        # Sample documents for demonstration purposes
-        documents = [
-            "Apple is a fruit.",
-            "Banana is also a fruit.",
-            "Both apple and banana are healthy.",
-            "Orange is another type of fruit."
-        ]
+
         # Index the sample documents (optional if documents are already indexed)
         # if not self.indexer.document_vectors:
         #     self.indexer.index_documents(documents)
@@ -423,6 +419,139 @@ class CLIInterface:
             ranked_results_updated = [(idss[doc_id], score) for doc_id, score in ranked_results[:10000]]
 
             return relevant_idss, ranked_results_updated
+    def run_final_dataset2(self, query_text):
+        # Load the dataset
+
+        dataset = ir_datasets.load("clinicaltrials/2021/trec-ct-2021")
+
+        # Step 2: Iterate through queries and store them
+        queries = {query.query_id: query.text for query in dataset.queries_iter()}
+        print("Queries loaded:", queries)
+
+        # Step 3: Extract relevant document IDs from qrels
+        qrels = {}
+        for qrel in dataset.qrels_iter():
+            if qrel.query_id not in qrels:
+                qrels[qrel.query_id] = []
+            qrels[qrel.query_id].append(qrel.doc_id)
+
+        print("Qrels loaded:", qrels)
+
+        # Step 4: Retrieve and read only relevant documents
+        # Set to store unique relevant document IDs
+        relevant_doc_ids = set()
+        for doc_ids in qrels.values():
+            relevant_doc_ids.update(doc_ids)
+
+        # Dictionary to store the relevant documents
+        relevant_docs = {query_id: [] for query_id in queries.keys()}
+        relevant_docs_id = {query_id: [] for query_id in queries.keys()}
+
+        # Iterate through the dataset and collect relevant documents
+        for doc in dataset.docs_iter():
+            if doc.doc_id in relevant_doc_ids:
+                for query_id, doc_ids in qrels.items():
+                    if doc.doc_id in doc_ids:
+                        relevant_docs[query_id].append(doc)
+                        relevant_docs_id[query_id].append(doc.doc_id)
+
+
+        # Step 5: Write relevant documents to files
+        # Create output directory if it doesn't exist
+        output_dir = "relevant_docs"
+        os.makedirs(output_dir, exist_ok=True)
+        processed_docs=[]
+        # for query_id, docs in relevant_docs.items():
+        #     query_output_path = os.path.join(output_dir, f"query_{query_id}.txt")
+        #     with open(query_output_path, 'w', encoding='utf-8') as file:
+        #         file.write(f"Query ID: {query_id}\nQuery: {queries[query_id]}\n\n")
+        #         for doc in docs:
+                    # file.write(f"Document ID: {doc.doc_id}\n")
+                    # file.write(f"Title: {doc.title}\n")
+                    # file.write(f"Condition: {doc.condition}\n")
+                    # file.write(f"Summary: {doc.summary}\n")
+                    # file.write(f"Detailed Description: {doc.detailed_description}\n")
+                    # file.write(f"Eligibility: {doc.eligibility}\n")
+                    # file.write("\n" + "=" * 80 + "\n\n")
+        #             processed_text = self.query_processor.complete_process_query(
+        #                (doc.title.lower() + " ") + doc.summary.lower()+" "+doc.condition+" "
+        #             )
+        #             processed_text = ' '.join(processed_text)
+        #             processed_docs.append((doc.doc_id, processed_text))
+        #
+        # print("Relevant documents saved.")
+        # self.indexer.storage_manager.save_processed_docs(processed_docs)
+
+        # documents = self.indexer.storage_manager.load_processed_docs()
+        documents = r.read_and_process_file(
+            file_path='/home/abdallh/PycharmProjects/information_system/data/processed_docs_dataset2.txt')
+        documents_data = r.get_second_values_from_tuples(documents)
+        idss = r.get_first_values_from_tuples(documents)
+        relevant_idss = []
+        # self.documents = self.indexer.storage_manager.load_processed_docs()
+        # self.indexer.vectorizer = self.indexer.storage_manager.load_vectorizer()
+        # self.indexer.document_vectors = self.indexer.storage_manager.load_document_vectors()
+        vectorizer = TfidfVectorizer()
+        # self.indexer.vectorizer = TfidfVectorizer(max_df=0.95, min_df=2, max_features=10000)
+
+        document_vectors = vectorizer.fit_transform(documents_data)
+        # # Save the vectorizer and document vectors
+        # self.indexer.storage_manager.save_vectorizer(self.indexer.vectorizer)
+        # self.indexer.storage_manager.save_document_vectors(self.indexer.document_vectors)
+
+        while True:
+            # query = input("\nEnter your search query (or 'exit' to quit): ")
+            # if query.lower() == 'exit':
+            #     break
+            # Process the query
+            # processed_query = self.query_processor.process_query(query)
+            processed_query = self.query_processor.complete_process_query(query_text)
+            # Join the list of strings into a single string
+            joined_string = " ".join(processed_query)
+            print(joined_string)
+            # Transform the processed query to VSM using the same vectorizer as the documents
+            query_vector = vectorizer.transform([joined_string])
+            # print(type(self.indexer.document_vectors))  # Output: <class 'numpy.ndarray'>
+            # print(type(query_vector))
+
+            # Perform the search to get similarity scores
+            similarity_scores = self.indexer.search_vectors_ev(query_vector=query_vector,document_vectors=document_vectors)
+            # print("Query Vector Shape:", query_vector.shape)
+            # # Print the shape of the document vectors
+            # print("Document Vectors Shape:", self.indexer.document_vectors.shape[0])
+            # print("Document Vectors Shape:", self.indexer.document_vectors.shape)
+
+            # Rank the results based on similarity scores
+            # ranked_results = self.ranker.rank_vectors_results(similarity_scores)
+            # print("this the similarity score:", similarity_scores)
+            # print(ranked_results)
+            # if top_similarity_score ==0:
+            #     # If the top score is below the threshold, return an unsure message
+            #     print("The system is unsure about the query. No relevant documents found.")
+            #     # return "The system is unsure about the query. No relevant documents found."
+            # else:
+            # print("\nSearch Results (ranked by relevance):")
+            # for rank, doc_id in enumerate(ranked_results[:10]):
+            #     self.print_ranked_data(self.documents[doc_id])
+
+            ranked_results = self.ranker.rank_vectors_results_reutrn_tuples(similarity_scores)
+            # print(ranked_results)
+
+            # # Print top-k ranked documents
+            # top_k = 10
+            # for rank, (doc_id, score) in enumerate(ranked_results[:top_k]):
+            #     print(f"Rank {rank + 1}: Document {doc_id + 1}, Similarity Score: {score}")
+            #     print("doc unique id", idss[doc_id])
+            #     print(self.documents[doc_id])
+            #     # self.print_ranked_data(self.documents[doc_id])
+            #
+            #     # print(self.documents[doc_id])
+            #     print()
+            for rank, (doc_id, score) in enumerate(ranked_results[:100]):
+                relevant_idss.append(idss[doc_id])
+            ranked_results_updated = [(idss[doc_id], score) for doc_id, score in ranked_results[:10000]]
+
+            return relevant_idss, ranked_results_updated ,relevant_docs_id
             # return ranked_results
 
     def load_dataset(self, file_path):
@@ -482,8 +611,8 @@ class CLIInterface:
     def print_ranked_data(self, doc):
         # Process each document as needed for your IR system
         # Extract document fields
-        # print(type(doc))
-        # print(doc)
+        print(type(doc))
+        print(doc)
         doc_id = doc.get('_id')
         doc_title = doc.get('title')
         doc_text = doc.get('text')
@@ -497,6 +626,25 @@ class CLIInterface:
         print(f"Title: {doc_title}")
         print(f"Text: {doc_text[:100]}...")  # Print the first 100 characters of the text
         print(f"Metadata: {doc_metadata}")
+        print()
+    def print_ranked_dataset_2(self, doc):
+        # Process each document as needed for your IR system
+        # Extract document fields
+        # print(type(doc))
+        # print(doc)
+        doc_id = doc.doc_id
+        doc_title = doc.title
+        doc_text = doc.detailed_description
+        doc_metadata = doc.summary
+
+        # Process document data as required by your IR system
+        # For example, you might index the document text, title, and metadata
+
+        # Print the document information as a demonstration
+        print(f"Document ID: {doc_id}")
+        print(f"Title: {doc_title}")
+        print(f"Text: {doc_text[:100]}...")  # Print the first 100 characters of the text
+        print(f"summary: {doc_metadata}")
         print()
 
     def read_file(self, file_path):
@@ -523,6 +671,17 @@ class CLIInterface:
                 doc_id = doc['_id']
                 if doc_id in document_ids:
                     matching_documents[doc_id] = doc
+                    # If all document IDs have been found, break the loop
+                    if len(matching_documents) == len(document_ids):
+                        break
+        return matching_documents
+    def get_docs_by_ids_dataset2(self,file_path, document_ids):
+        matching_documents = {}
+        dataset = ir_datasets.load(file_path)
+
+        for doc in dataset.docs_iter():
+                if doc.doc_id in document_ids:
+                    matching_documents[doc.doc_id] = doc
                     # If all document IDs have been found, break the loop
                     if len(matching_documents) == len(document_ids):
                         break

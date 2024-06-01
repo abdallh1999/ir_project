@@ -1,3 +1,5 @@
+from itertools import chain
+
 import spacy
 
 # Load English language model
@@ -526,9 +528,9 @@ class DocumentProcessor:
 
 def main():
     processor = DocumentProcessor(
-        corpus_file='/path/to/corpus.jsonl',
-        qrels_file='/path/to/qrels.tsv',
-        queries_file='/path/to/queries.jsonl'
+        corpus_file='/home/abdallh/Documents/webis-touche2020/corpus.jsonl',
+        qrels_file='/home/abdallh/Documents/webis-touche2020/qrels.tsv',
+        queries_file='/home/abdallh/Documents/webis-touche2020/queries.jsonl'
     )
     processor.process_documents()
     processor.evaluate()
@@ -572,6 +574,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 class DocumentProcessor:
     def __init__(self, corpus_file, qrels_file, queries_file):
+        self.document_embeddings = None
         self.corpus_file = corpus_file
         self.qrels_file = qrels_file
         self.queries_file = queries_file
@@ -698,9 +701,9 @@ class Evaluate:
 
 def main():
     processor = DocumentProcessor(
-        corpus_file='/path/to/corpus.jsonl',
-        qrels_file='/path/to/qrels.tsv',
-        queries_file='/path/to/queries.jsonl'
+        corpus_file='/home/abdallh/Documents/webis-touche2020/corpus.jsonl',
+        qrels_file='/home/abdallh/Documents/webis-touche2020/qrels.tsv',
+        queries_file='/home/abdallh/Documents/webis-touche2020/queries.jsonl'
     )
     processor.process_documents()
     processor.evaluate()
@@ -719,6 +722,7 @@ from sklearn.metrics.pairwise import cosine_similarity
 
 class MultilingualDocumentProcessor:
     def __init__(self, corpus_file, qrels_file, queries_file):
+        self.document_embeddings = None
         self.corpus_file = corpus_file
         self.qrels_file = qrels_file
         self.queries_file = queries_file
@@ -845,9 +849,9 @@ class Evaluate:
 
 def main():
     processor = MultilingualDocumentProcessor(
-        corpus_file='/path/to/corpus.jsonl',
-        qrels_file='/path/to/qrels.tsv',
-        queries_file='/path/to/queries.jsonl'
+        corpus_file='/home/abdallh/Documents/webis-touche2020/corpus.jsonl',
+        qrels_file='/home/abdallh/Documents/webis-touche2020/qrels.tsv',
+        queries_file='/home/abdallh/Documents/webis-touche2020/queries.jsonl'
     )
     processor.process_documents()
     processor.evaluate()
