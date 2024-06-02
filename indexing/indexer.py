@@ -25,8 +25,8 @@ class Indexer:
         self.stop_requested = False
         self.current_position = 0  # Initialize current_position
         # Set up signal handling
-        signal.signal(signal.SIGINT, self.handle_stop_signal)
-        signal.signal(signal.SIGTERM, self.handle_stop_signal)
+        # signal.signal(signal.SIGINT, self.handle_stop_signal)
+        # signal.signal(signal.SIGTERM, self.handle_stop_signal)
 
     def handle_stop_signal(self, signum, frame):
         print(f"Signal {signum} received, saving checkpoint and exiting...")

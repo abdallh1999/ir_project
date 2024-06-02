@@ -204,18 +204,28 @@ def search_endpoint_all():
     matching_documents = interface.get_docs_by_ids('/home/abdallh/Documents/webis-touche2020/corpus.jsonl',
                                                    retrieved_ids)
     docs=[]
-    for rank, (doc_id, score) in enumerate(retrieved_results[:20]):
-        document = matching_documents.get(doc_id)
-        if document:
-            docs.append(document)
-            print(f"Rank {rank + 1}: Document {doc_id}, Similarity Score: {score}")
-            interface.print_ranked_data(document)
-        else:
-            print(f"Rank {rank + 1}: Document {doc_id} not found")
+    # for rank, (doc_id, score) in enumerate(retrieved_results[:20]):
+    #     document = matching_documents.get(doc_id)
+    #     if document:
+    #         docs.append(document)
+    #         print(f"Rank {rank + 1}: Document {doc_id}, Similarity Score: {score}")
+    #         interface.print_ranked_data(document)
+    #     else:
+    #         print(f"Rank {rank + 1}: Document {doc_id} not found")
 
+    retrieved_docs = [
+        {
+            '_id': matching_documents.get(doc_id)['_id'],
+            'title': matching_documents.get(doc_id)['title'],
+            'text': matching_documents.get(doc_id)['text'],
+            'score': score
+        }
+        for doc_id, score in retrieved_results[:10]
+    ]
+    print(retrieved_docs)
     # selected_doc_ids = request.json.get('selected_doc_ids', [])
     # ranked_docs = search(query_text, selected_doc_ids)
-    return jsonify(docs)
+    return jsonify(retrieved_docs)
 
 
 def read_records_from_files(file_paths, relevant_document_ids):
@@ -323,7 +333,21 @@ def read_random_records(file_path, num_records=10):
 
     return records
 
+@app.route('/feedback', methods=['POST'])
+def feedback():
+    feedback_data = request.json
+    doc_id = feedback_data.get('doc_id')
+    relevant = feedback_data.get('relevant')
+    user_feedback = feedback_data.get('feedback', '')
 
+    if doc_id is None or relevant is None:
+        return jsonify({'error': 'doc_id and relevant fields are required'}), 400
+
+    # Store the feedback in a database or file
+    with open('feedback.txt', 'a') as f:
+        f.write(f"{doc_id}\t{relevant}\t{user_feedback}\n")
+
+    return jsonify({'message': 'Feedback received'}), 200
 @app.route('/queries', methods=['GET'])
 def get_queries():
     records = read_random_records(file_path='/home/abdallh/Documents/webis-touche2020/queries.jsonl', num_records=14)

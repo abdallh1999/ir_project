@@ -77,6 +77,7 @@ class StorageManager:
 
     def load_document_vectors(self, filename='document_vectors.pkl'):
         file_path = self.base_path + filename
+        file_path='/home/abdallh/PycharmProjects/information_system/data/'+filename
         with open(file_path, 'rb') as file:
             return pickle.load(file)
 
@@ -87,6 +88,8 @@ class StorageManager:
 
     def load_vectorizer(self, filename='tfidf_vectorizer.pkl'):
         file_path = self.base_path + filename
+        file_path='/home/abdallh/PycharmProjects/information_system/data/'+filename
+
         with open(file_path, 'rb') as file:
             return pickle.load(file)
 

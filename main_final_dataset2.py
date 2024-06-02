@@ -147,12 +147,12 @@ from interface.cli_interface import CLIInterface
 # nltk.download()
 
 interface = CLIInterface()
-retrieved_ids, retrieved_results ,relevant_docs = interface.run_final_dataset2(
+retrieved_ids, retrieved_results, relevant_docs = interface.run_final_dataset2(
     'Patient is a 45-year-old man with a history of anaplastic astrocytoma of the spine complicated by severe lower extremity weakness and urinary retention s/p Foley catheter, high-dose steroids, hypertension, and chronic pain. The tumor is located in the T-L spine, unresectable anaplastic astrocytoma s/p radiation. Complicated by progressive lower extremity weakness and urinary retention. Patient initially presented with RLE weakness where his right knee gave out with difficulty walking and right anterior thigh numbness. MRI showed a spinal cord conus mass which was biopsied and found to be anaplastic astrocytoma. Therapy included field radiation t10-l1 followed by 11 cycles of temozolomide 7 days on and 7 days off. This was followed by CPT-11 Weekly x4 with Avastin Q2 weeks/ 2 weeks rest and repeat cycle. ')
 # print(retrieved_ids)
 # print(retrieved_results)
 matching_documents = interface.get_docs_by_ids_dataset2('clinicaltrials/2021/trec-ct-2021'
-                                               , retrieved_ids)
+                                                        , retrieved_ids)
 e = Evaluate(actual=relevant_docs["1"], predicted=retrieved_ids, k=10)
 precision, recall, f1 = e.calculate_metrics()
 e.print_all()
@@ -165,3 +165,8 @@ for rank, (doc_id, score) in enumerate(retrieved_results[:10]):
         interface.print_ranked_dataset_2(document)
     else:
         print(f"Rank {rank + 1}: Document {doc_id} not found")
+e.print_all()
+# print("the retrieved_ids ", retrieved_ids)
+# print("relevant docs ids", relevant_docs["1"])
+print("the retrieved_ids ", len(retrieved_ids))
+print("relevant docs ids", len(relevant_docs["1"]))

@@ -5,5 +5,10 @@ data/tfidf_vectorizer.pkl
 data/processed_docs.txt
 data/processed_docs1.txt
 data/document_vectors.pkl
+data/processed_docs_dataset2.txt
+data/document_vectors2.pkl
+data/tfidf_vectorizer2.pkll
 file_checkpoint.pkl
 relevant_docs/
+data/
+apis/data/
