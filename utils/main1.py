@@ -7,17 +7,34 @@ from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 
 
-
+# /home/abdallh/Documents/webis-touche2020/
 
 def main():
     interface = CLIInterface()
+    interface.load_data('/home/abdallh/Documents/webis-touche2020/corpus.jsonl')
+    qrels = interface.load_qrels('/home/abdallh/Documents/webis-touche2020/qrels/test.tsv')
+    interface.load_queries('/home/abdallh/Documents/webis-touche2020/queries.jsonl')
     interface.run()
-
+    # Example of Searching and Evaluating
+    # query_id = '35'
+    # query_text = interface.queries[query_id]
+    # retrieved_docs = interface.search2(query_text)
+    # precision, recall = interface.evaluate(query_id, retrieved_docs, qrels)
+    #
+    # print(f"Precision: {precision}, Recall: {recall}")
 
 if __name__ == '__main__':
     main()
+    # preprocessed_documents = [
+    #     ['Apple', 'fruit', 'i'],
+    #     ['Banana', 'also', 'fruit', 'i'],
+    #     ['Both', 'apple', 'banana', 'healthy', 'i'],
+    #     ['Orange', 'another', 'type', 'fruit', 'i']
+    # ]
+    # processed_documents = [' '.join(doc) for doc in preprocessed_documents]
+    # print(processed_documents)
 
-    # # Sample data
+    # Sample data
     # documents = [
     #     "Apple is a fruit.",
     #     "Banana is also a fruit.",
