@@ -1,4 +1,5 @@
 import string
+from itertools import chain
 from typing import List
 
 from nltk.stem import PorterStemmer
@@ -7,6 +8,8 @@ from nltk.tokenize import word_tokenize
 from nltk import pos_tag
 from nltk.corpus import wordnet, stopwords
 from spellchecker import SpellChecker
+from nltk.corpus import wordnet
+from textblob import TextBlob
 
 cureent_index = 0
 
@@ -17,6 +20,31 @@ class QueryProcessor:
 
         return query.lower()
 
+    def expand_query(self, query):
+        expanded_query = query
+        for word in query.split():
+            synonyms = wordnet.synsets(word)
+            lemmas = set(chain.from_iterable([word.lemma_names() for word in synonyms]))
+            if lemmas:
+                expanded_query += ' ' + ' '.join(lemmas)
+        return expanded_query
+
+    def suggest_query_refinement(self, query):
+        synonyms = set()
+        for word in query.split():
+            for synset in wordnet.synsets(word):
+                synonyms.update(synset.lemma_names())
+        return list(synonyms)
+
+    def spell_correction(self, query):
+        corrected_query = str(TextBlob(query).correct())
+        return corrected_query
+
+    def refine_query(self, query):
+        corrected_query = self.spell_correction(query)
+        expanded_query = self.expand_query(corrected_query)
+        return expanded_query
+
     def complete_process_query(self, text):
         # text = "The boys are running and the leaves are falling."
         # if (text is list):
@@ -25,7 +53,7 @@ class QueryProcessor:
         #     text.lower()
         # print(text)
         global cureent_index
-        cureent_index+=1
+        cureent_index += 1
         # print(f'\n-------------------------curent_index ={cureent_index}---------------- /n')
         text.lower()
         # print(text)

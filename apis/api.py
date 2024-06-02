@@ -323,6 +323,13 @@ def read_random_records(file_path, num_records=10):
 
     return records
 
+@app.route('/feedback', methods=['POST'])
+def feedback():
+    user_feedback = request.form.get('feedback')
+    # Store the feedback in a database or file
+    with open('feedback.txt', 'a') as f:
+        f.write(user_feedback + '\n')
+    return 'Feedback received', 200
 
 @app.route('/queries', methods=['GET'])
 def get_queries():

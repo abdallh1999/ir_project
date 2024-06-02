@@ -66,7 +66,7 @@ class StorageManager:
         with open(file_path, 'rb') as file:
             return pickle.load(file)
 
-    def save_document_vectors(self, document_vectors, filename='document_vectors.pkl'):
+    def save_document_vectors(self, document_vectors, filename='document_vectors2.pkl'):
         file_path = self.base_path + filename
         with open(file_path, 'wb') as file:
             pickle.dump(document_vectors, file)
@@ -80,7 +80,7 @@ class StorageManager:
         with open(file_path, 'rb') as file:
             return pickle.load(file)
 
-    def save_vectorizer(self, vectorizer, filename='tfidf_vectorizer.pkl'):
+    def save_vectorizer(self, vectorizer, filename='tfidf_vectorizer2.pkl'):
         file_path = self.base_path + filename
         with open(file_path, 'wb') as file:
             pickle.dump(vectorizer, file)
@@ -102,7 +102,7 @@ class StorageManager:
         with open(file_path, 'r') as file:
             vocabulary = [line.strip() for line in file]
         return vocabulary
-    def save_processed_docs(self, vocabulary, filename='processed_docs.txt'):
+    def save_processed_docs(self, vocabulary, filename='processed_docs_dataset2.txt'):
         file_path = self.base_path + filename
         with open(file_path, 'a') as file:
             for term in vocabulary:
