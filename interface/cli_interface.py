@@ -272,7 +272,6 @@ class CLIInterface:
     def run(self):
         print("Welcome to the Information Retrieval System!")
 
-
         # Index the sample documents (optional if documents are already indexed)
         # if not self.indexer.document_vectors:
         #     self.indexer.index_documents(documents)
@@ -414,11 +413,12 @@ class CLIInterface:
             #
             #     # print(self.documents[doc_id])
             #     print()
-            for rank, (doc_id, score) in enumerate(ranked_results[:10000]):
+            for rank, (doc_id, score) in enumerate(ranked_results[:5000]):
                 relevant_idss.append(idss[doc_id])
             ranked_results_updated = [(idss[doc_id], score) for doc_id, score in ranked_results[:10000]]
 
             return relevant_idss, ranked_results_updated
+
     def run_final_dataset2(self, query_text):
         # Load the dataset
 
@@ -455,39 +455,35 @@ class CLIInterface:
                         relevant_docs[query_id].append(doc)
                         relevant_docs_id[query_id].append(doc.doc_id)
 
-
-        # Step 5: Write relevant documents to files
-        # Create output directory if it doesn't exist
-        output_dir = "relevant_docs"
-        os.makedirs(output_dir, exist_ok=True)
-        processed_docs=[]
-        # for query_id, docs in relevant_docs.items():
-        #     query_output_path = os.path.join(output_dir, f"query_{query_id}.txt")
-        #     with open(query_output_path, 'w', encoding='utf-8') as file:
-        #         file.write(f"Query ID: {query_id}\nQuery: {queries[query_id]}\n\n")
-        #         for doc in docs:
-                    # file.write(f"Document ID: {doc.doc_id}\n")
-                    # file.write(f"Title: {doc.title}\n")
-                    # file.write(f"Condition: {doc.condition}\n")
-                    # file.write(f"Summary: {doc.summary}\n")
-                    # file.write(f"Detailed Description: {doc.detailed_description}\n")
-                    # file.write(f"Eligibility: {doc.eligibility}\n")
-                    # file.write("\n" + "=" * 80 + "\n\n")
-        #             processed_text = self.query_processor.complete_process_query(
-        #                (doc.title.lower() + " ") + doc.summary.lower()+" "+doc.condition+" "
-        #             )
-        #             processed_text = ' '.join(processed_text)
-        #             processed_docs.append((doc.doc_id, processed_text))
-        #
-        # print("Relevant documents saved.")
-        # self.indexer.storage_manager.save_processed_docs(processed_docs)
-
-        # documents = self.indexer.storage_manager.load_processed_docs()
         documents = r.read_and_process_file(
             file_path='/home/abdallh/PycharmProjects/information_system/data/processed_docs_dataset2.txt')
         documents_data = r.get_second_values_from_tuples(documents)
         idss = r.get_first_values_from_tuples(documents)
         relevant_idss = []
+        # Collect all document IDs excluding those in exclude_doc_ids
+        all_doc_ids = [doc.doc_id for doc in dataset.docs_iter() if doc.doc_id not in idss]
+        import random
+        sampled_doc_ids = random.sample(all_doc_ids, 5000)
+
+        # Step 5: Write relevant documents to files
+        # Create output directory if it doesn't exist
+        output_dir = "relevant_docs"
+        os.makedirs(output_dir, exist_ok=True)
+        processed_docs = []
+        for doc in dataset.docs_iter():
+            if doc.doc_id in sampled_doc_ids:
+                processed_text = self.query_processor.complete_process_query(
+                    (doc.title.lower() + " ") + doc.summary.lower() + " " + doc.condition + " "
+                )
+                processed_text = ' '.join(processed_text)
+                processed_docs.append((doc.doc_id, processed_text))
+        #
+        # print("Relevant documents saved.")
+        self.indexer.storage_manager.save_processed_docs(processed_docs)
+        return 0, 0, 0
+
+        # documents = self.indexer.storage_manager.load_processed_docs()
+
         # self.documents = self.indexer.storage_manager.load_processed_docs()
         # self.indexer.vectorizer = self.indexer.storage_manager.load_vectorizer()
         # self.indexer.document_vectors = self.indexer.storage_manager.load_document_vectors()
@@ -496,8 +492,8 @@ class CLIInterface:
 
         document_vectors = vectorizer.fit_transform(documents_data)
         # # Save the vectorizer and document vectors
-        # self.indexer.storage_manager.save_vectorizer(self.indexer.vectorizer)
-        # self.indexer.storage_manager.save_document_vectors(self.indexer.document_vectors)
+        self.indexer.storage_manager.save_vectorizer(vectorizer)
+        self.indexer.storage_manager.save_document_vectors(document_vectors)
 
         while True:
             # query = input("\nEnter your search query (or 'exit' to quit): ")
@@ -515,7 +511,8 @@ class CLIInterface:
             # print(type(query_vector))
 
             # Perform the search to get similarity scores
-            similarity_scores = self.indexer.search_vectors_ev(query_vector=query_vector,document_vectors=document_vectors)
+            similarity_scores = self.indexer.search_vectors_ev(query_vector=query_vector,
+                                                               document_vectors=document_vectors)
             # print("Query Vector Shape:", query_vector.shape)
             # # Print the shape of the document vectors
             # print("Document Vectors Shape:", self.indexer.document_vectors.shape[0])
@@ -547,11 +544,11 @@ class CLIInterface:
             #
             #     # print(self.documents[doc_id])
             #     print()
-            for rank, (doc_id, score) in enumerate(ranked_results[:100]):
+            for rank, (doc_id, score) in enumerate(ranked_results[:10000]):
                 relevant_idss.append(idss[doc_id])
             ranked_results_updated = [(idss[doc_id], score) for doc_id, score in ranked_results[:10000]]
 
-            return relevant_idss, ranked_results_updated ,relevant_docs_id
+            return relevant_idss, ranked_results_updated, relevant_docs_id
             # return ranked_results
 
     def load_dataset(self, file_path):
@@ -627,6 +624,7 @@ class CLIInterface:
         print(f"Text: {doc_text[:100]}...")  # Print the first 100 characters of the text
         print(f"Metadata: {doc_metadata}")
         print()
+
     def print_ranked_dataset_2(self, doc):
         # Process each document as needed for your IR system
         # Extract document fields
@@ -663,7 +661,7 @@ class CLIInterface:
     #
     #     return matching_docs
 
-    def get_docs_by_ids(self,file_path, document_ids):
+    def get_docs_by_ids(self, file_path, document_ids):
         matching_documents = {}
         with open(file_path, 'r') as file:
             for line in file:
@@ -675,14 +673,15 @@ class CLIInterface:
                     if len(matching_documents) == len(document_ids):
                         break
         return matching_documents
-    def get_docs_by_ids_dataset2(self,file_path, document_ids):
+
+    def get_docs_by_ids_dataset2(self, file_path, document_ids):
         matching_documents = {}
         dataset = ir_datasets.load(file_path)
 
         for doc in dataset.docs_iter():
-                if doc.doc_id in document_ids:
-                    matching_documents[doc.doc_id] = doc
-                    # If all document IDs have been found, break the loop
-                    if len(matching_documents) == len(document_ids):
-                        break
+            if doc.doc_id in document_ids:
+                matching_documents[doc.doc_id] = doc
+                # If all document IDs have been found, break the loop
+                if len(matching_documents) == len(document_ids):
+                    break
         return matching_documents

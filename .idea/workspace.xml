@@ -6,13 +6,18 @@
   <component name="ChangeListManager">
     <list default="true" id="88a41b4d-c9f4-4745-8e43-7b5d1af4aaba" name="Changes" comment="final touch">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/data/tfidf_vectorizer.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/data/tfidf_vectorizer.pkl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/apis/api.py" beforeDir="false" afterPath="$PROJECT_DIR$/apis/api.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/processed_docs_dataset2.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/processed_docs_dataset2.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/data/vocabulary.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/vocabulary.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/file_checkpoint.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/file_checkpoint.pkl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interface/cli_interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/interface/cli_interface.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_final_dataset2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_final.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_final_dataset1.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/output_file1.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/output_file2.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/query/query_processor.py" beforeDir="false" afterPath="$PROJECT_DIR$/query/query_processor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ranking/ranker.py" beforeDir="false" afterPath="$PROJECT_DIR$/ranking/ranker.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/storage/storage_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/storage/storage_manager.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/utils/utilities.py" beforeDir="false" afterPath="$PROJECT_DIR$/utils/utilities.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -44,35 +49,36 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Python.api.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main1.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main_component.executor&quot;: &quot;Run&quot;,
-    &quot;Python.main_final.executor&quot;: &quot;Run&quot;,
-    &quot;Python.read.executor&quot;: &quot;Run&quot;,
-    &quot;Python.read_2000.executor&quot;: &quot;Run&quot;,
-    &quot;Python.short_evaluation.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;semi-ready&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/home/abdallh/PycharmProjects/information_system&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;aDefault&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Python.api.executor": "Run",
+    "Python.main.executor": "Run",
+    "Python.main1.executor": "Run",
+    "Python.main_component.executor": "Run",
+    "Python.main_final.executor": "Run",
+    "Python.main_final_dataset2.executor": "Run",
+    "Python.read.executor": "Run",
+    "Python.read_2000.executor": "Run",
+    "Python.short_evaluation.executor": "Run",
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "git-widget-placeholder": "semi-ready",
+    "last_opened_file_path": "/home/abdallh/PycharmProjects/information_system",
+    "run.code.analysis.last.selected.profile": "aDefault",
+    "settings.editor.selected.configurable": "preferences.pluginManager"
   },
-  &quot;keyToStringList&quot;: {
-    &quot;com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File&quot;: [
-      &quot;GitIgnore&quot;
+  "keyToStringList": {
+    "com.intellij.ide.scratch.ScratchImplUtil$2/New Scratch File": [
+      "GitIgnore"
     ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.main">
+  <component name="RunManager" selected="Python.main_final_dataset2">
     <configuration name="api" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="information_system" />
       <option name="ENV_FILES" value="" />
@@ -87,28 +93,6 @@
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="SCRIPT_NAME" value="$PROJECT_DIR$/apis/api.py" />
-      <option name="PARAMETERS" value="" />
-      <option name="SHOW_COMMAND_LINE" value="false" />
-      <option name="EMULATE_TERMINAL" value="false" />
-      <option name="MODULE_MODE" value="false" />
-      <option name="REDIRECT_INPUT" value="false" />
-      <option name="INPUT_FILE" value="" />
-      <method v="2" />
-    </configuration>
-    <configuration name="main" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
-      <module name="information_system" />
-      <option name="ENV_FILES" value="" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="PARENT_ENVS" value="true" />
-      <envs>
-        <env name="PYTHONUNBUFFERED" value="1" />
-      </envs>
-      <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="IS_MODULE_SDK" value="true" />
-      <option name="ADD_CONTENT_ROOTS" value="true" />
-      <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -162,7 +146,7 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="main_final" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
+    <configuration name="main_final_dataset1" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="information_system" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -175,7 +159,29 @@
       <option name="IS_MODULE_SDK" value="true" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
-      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_final.py" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_final_dataset1.py" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
+    <configuration name="main_final_dataset2" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
+      <module name="information_system" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="$PROJECT_DIR$/main_final_dataset2.py" />
       <option name="PARAMETERS" value="" />
       <option name="SHOW_COMMAND_LINE" value="false" />
       <option name="EMULATE_TERMINAL" value="false" />
@@ -229,9 +235,9 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Python.main" />
+      <item itemvalue="Python.main_final_dataset2" />
       <item itemvalue="Python.main1" />
-      <item itemvalue="Python.main_final" />
+      <item itemvalue="Python.main_final_dataset1" />
       <item itemvalue="Python.read_2000" />
       <item itemvalue="Python.read" />
       <item itemvalue="Python.api" />
@@ -239,7 +245,7 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.main_final" />
+        <item itemvalue="Python.main_final_dataset1" />
         <item itemvalue="Python.main_component" />
         <item itemvalue="Python.read_2000" />
         <item itemvalue="Python.read" />
