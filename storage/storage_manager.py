@@ -71,13 +71,24 @@ class StorageManager:
         with open(file_path, 'wb') as file:
             pickle.dump(document_vectors, file)
 
+    def save_document_vectors2(self, document_vectors, filename='document_vectors2.pkl'):
+        file_path = self.base_path + filename
+        with open(file_path, 'wb') as file:
+            pickle.dump(document_vectors, file)
+
     def batch_file_exists(self, batch_id):
         batch_file = os.path.join(self.document_vectors_dir, f'document_vectors_{batch_id}.pkl')
         return os.path.exists(batch_file)
 
     def load_document_vectors(self, filename='document_vectors.pkl'):
         file_path = self.base_path + filename
-        file_path='/home/abdallh/PycharmProjects/information_system/data/'+filename
+        file_path = '/home/abdallh/PycharmProjects/information_system/data/' + filename
+        with open(file_path, 'rb') as file:
+            return pickle.load(file)
+
+    def load_document_vectors2(self, filename='document_vectors2.pkl'):
+        file_path = self.base_path + filename
+        file_path = '/home/abdallh/PycharmProjects/information_system/data/' + filename
         with open(file_path, 'rb') as file:
             return pickle.load(file)
 
@@ -88,7 +99,19 @@ class StorageManager:
 
     def load_vectorizer(self, filename='tfidf_vectorizer.pkl'):
         file_path = self.base_path + filename
-        file_path='/home/abdallh/PycharmProjects/information_system/data/'+filename
+        file_path = '/home/abdallh/PycharmProjects/information_system/data/' + filename
+
+        with open(file_path, 'rb') as file:
+            return pickle.load(file)
+
+    def save_vectorizer2(self, vectorizer, filename='tfidf_vectorizer.pkl'):
+        file_path = self.base_path + filename
+        with open(file_path, 'wb') as file:
+            pickle.dump(vectorizer, file)
+
+    def load_vectorizer2(self, filename='tfidf_vectorizer2.pkl'):
+        file_path = self.base_path + filename
+        file_path = '/home/abdallh/PycharmProjects/information_system/data/' + filename
 
         with open(file_path, 'rb') as file:
             return pickle.load(file)
@@ -105,6 +128,7 @@ class StorageManager:
         with open(file_path, 'r') as file:
             vocabulary = [line.strip() for line in file]
         return vocabulary
+
     def save_processed_docs(self, vocabulary, filename='processed_docs_dataset2.txt'):
         file_path = self.base_path + filename
         with open(file_path, 'a') as file:
@@ -115,6 +139,15 @@ class StorageManager:
                 file.write(f"{term}\n")
 
     def load_processed_docs(self, filename='processed_docs.txt'):
+        file_path = self.base_path + filename
+        vocabulary = []
+        with open(file_path, 'r') as file:
+            # vocabulary = [print(line.strip()) for line in file]
+            vocabulary = [line.strip() for line in file]
+            # print("this the vocabulary",len(vocabulary))
+        return vocabulary
+
+    def load_processed_docs2(self, filename='processed_docs_dataset2.txt'):
         file_path = self.base_path + filename
         vocabulary = []
         with open(file_path, 'r') as file:

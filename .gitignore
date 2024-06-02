@@ -12,3 +12,4 @@ file_checkpoint.pkl
 relevant_docs/
 data/
 apis/data/
+apis/file_checkpoint.pkl

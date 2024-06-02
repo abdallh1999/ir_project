@@ -484,16 +484,16 @@ class CLIInterface:
 
         # documents = self.indexer.storage_manager.load_processed_docs()
 
-        # self.documents = self.indexer.storage_manager.load_processed_docs()
-        # self.indexer.vectorizer = self.indexer.storage_manager.load_vectorizer()
+        # self.documents = self.indexer.storage_manager.load_processed_docs2()
+        # self.indexer.vectorizer = self.indexer.storage_manager.load_vectorizer2()
         # self.indexer.document_vectors = self.indexer.storage_manager.load_document_vectors()
         vectorizer = TfidfVectorizer()
         # self.indexer.vectorizer = TfidfVectorizer(max_df=0.95, min_df=2, max_features=10000)
 
         document_vectors = vectorizer.fit_transform(documents_data)
         # # Save the vectorizer and document vectors
-        self.indexer.storage_manager.save_vectorizer(vectorizer)
-        self.indexer.storage_manager.save_document_vectors(document_vectors)
+        self.indexer.storage_manager.save_vectorizer2(vectorizer)
+        self.indexer.storage_manager.save_document_vectors2(document_vectors)
 
         while True:
             # query = input("\nEnter your search query (or 'exit' to quit): ")
