@@ -35,8 +35,9 @@ def main():
     print(len(all_relevant_docs))
     print(all_relevant_docs)
     # Example of Searching and Evaluating
-    query_id = '2'
+    query_id = '1'
     query_text = interface.queries[query_id]
+    print(query_text)
     with open('/home/abdallh/Documents/webis-touche2020/qrels/test.tsv', 'r') as f:
         qrels = f.readlines()
 
@@ -48,18 +49,28 @@ def main():
                                                    retrieved_ids)
     # print(matching_documents)
     # print(type(matching_documents))
-    for rank, (doc_id, score) in enumerate(retrieved_results[:10]):
+    # for rank, (doc_id, score) in enumerate(retrieved_results[:10]):
+    #     # if doc_id in matching_documents['_id']:
+    #     document = matching_documents.get(doc_id)
+    #
+    #     if document:
+    #         # document = matching_documents[doc_id]
+    #         # print(doc_id)
+    #         print(f"Rank {rank + 1}: Document {doc_id}, Similarity Score: {score}")
+    #         interface.print_ranked_data(document)
+    #         # print(doc_id)
+    #     else:
+    #         print(f"Rank {rank + 1}: Document {doc_id} not found")
+    for doc_id in relevant_docs:
         # if doc_id in matching_documents['_id']:
         document = matching_documents.get(doc_id)
 
         if document:
             # document = matching_documents[doc_id]
             # print(doc_id)
-            print(f"Rank {rank + 1}: Document {doc_id}, Similarity Score: {score}")
+            # print(f"Rank {rank + 1}: Document {doc_id}, Similarity Score: {score}")
             interface.print_ranked_data(document)
             # print(doc_id)
-        else:
-            print(f"Rank {rank + 1}: Document {doc_id} not found")
 
     # self.print_ranked_data(self.documents[doc_id])
 

@@ -16,6 +16,7 @@ from scipy.sparse import vstack
 import re
 import ir_datasets
 import os
+from rank_bm25 import BM25Okapi
 
 
 class CLIInterface:
@@ -349,8 +350,12 @@ class CLIInterface:
         # self.indexer.index_documents(self.documents)
 
         # documents = self.indexer.storage_manager.load_processed_docs()
-        documents = r.read_and_process_file(
+        documents_list = r.read_and_process_file(
             file_path='/home/abdallh/PycharmProjects/information_system/data/processed_docs.txt')
+
+        documents=set(documents_list)
+        print(len(documents_list))
+        print(len(documents))
         self.documents = r.get_second_values_from_tuples(documents)
         idss = r.get_first_values_from_tuples(documents)
         relevant_idss = []
@@ -365,6 +370,7 @@ class CLIInterface:
         self.indexer.storage_manager.save_vectorizer(self.indexer.vectorizer)
         self.indexer.storage_manager.save_document_vectors(self.indexer.document_vectors)
 
+
         while True:
             # query = input("\nEnter your search query (or 'exit' to quit): ")
             # if query.lower() == 'exit':
@@ -377,43 +383,30 @@ class CLIInterface:
             print(joined_string)
             # Transform the processed query to VSM using the same vectorizer as the documents
             query_vector = self.indexer.vectorizer.transform([joined_string])
-            # print(type(self.indexer.document_vectors))  # Output: <class 'numpy.ndarray'>
-            # print(type(query_vector))
 
             # Perform the search to get similarity scores
             similarity_scores = self.indexer.search_vectors(query_vector)
-            # print("Query Vector Shape:", query_vector.shape)
-            # # Print the shape of the document vectors
-            # print("Document Vectors Shape:", self.indexer.document_vectors.shape[0])
-            # print("Document Vectors Shape:", self.indexer.document_vectors.shape)
-
-            # Rank the results based on similarity scores
-            # ranked_results = self.ranker.rank_vectors_results(similarity_scores)
-            # print("this the similarity score:", similarity_scores)
-            # print(ranked_results)
-            # if top_similarity_score ==0:
-            #     # If the top score is below the threshold, return an unsure message
-            #     print("The system is unsure about the query. No relevant documents found.")
-            #     # return "The system is unsure about the query. No relevant documents found."
-            # else:
-            # print("\nSearch Results (ranked by relevance):")
-            # for rank, doc_id in enumerate(ranked_results[:10]):
-            #     self.print_ranked_data(self.documents[doc_id])
-
-            ranked_results = self.ranker.rank_vectors_results_reutrn_tuples(similarity_scores)
-            # print(ranked_results)
-
-            # # Print top-k ranked documents
-            # top_k = 10
-            # for rank, (doc_id, score) in enumerate(ranked_results[:top_k]):
-            #     print(f"Rank {rank + 1}: Document {doc_id + 1}, Similarity Score: {score}")
-            #     print("doc unique id", idss[doc_id])
-            #     print(self.documents[doc_id])
-            #     # self.print_ranked_data(self.documents[doc_id])
             #
-            #     # print(self.documents[doc_id])
-            #     print()
-            for rank, (doc_id, score) in enumerate(ranked_results[:5000]):
+            ranked_results = self.ranker.rank_vectors_results_reutrn_tuples(similarity_scores)
+
+            #-------------------------------------------------------------------------
+            # # Calculate cosine similarity using TF-IDF
+            # tfidf_similarity_scores = cosine_similarity(query_vector, self.indexer.document_vectors).flatten()
+            # # Initialize BM25
+            # bm25 = BM25Okapi(self.documents)
+            #
+            # # Calculate BM25 scores
+            # bm25_scores = bm25.get_scores(joined_string.split())
+            #
+            # # Combine the scores for ranking (you may experiment with different weighting)
+            # combined_scores = (tfidf_similarity_scores + bm25_scores) / 2
+            #
+            # # Get the indices of documents sorted by combined scores
+            # sorted_indices = combined_scores.argsort()[::-1]
+            # ranked_results = self.ranker.rank_vectors_results_reutrn_tuples(sorted_indices)
+            #------------------------------------------------------------------------
+
+            for rank, (doc_id, score) in enumerate(ranked_results[:10000]):
                 relevant_idss.append(idss[doc_id])
             ranked_results_updated = [(idss[doc_id], score) for doc_id, score in ranked_results[:10000]]
 
@@ -513,37 +506,10 @@ class CLIInterface:
             # Perform the search to get similarity scores
             similarity_scores = self.indexer.search_vectors_ev(query_vector=query_vector,
                                                                document_vectors=document_vectors)
-            # print("Query Vector Shape:", query_vector.shape)
-            # # Print the shape of the document vectors
-            # print("Document Vectors Shape:", self.indexer.document_vectors.shape[0])
-            # print("Document Vectors Shape:", self.indexer.document_vectors.shape)
-
-            # Rank the results based on similarity scores
-            # ranked_results = self.ranker.rank_vectors_results(similarity_scores)
-            # print("this the similarity score:", similarity_scores)
-            # print(ranked_results)
-            # if top_similarity_score ==0:
-            #     # If the top score is below the threshold, return an unsure message
-            #     print("The system is unsure about the query. No relevant documents found.")
-            #     # return "The system is unsure about the query. No relevant documents found."
-            # else:
-            # print("\nSearch Results (ranked by relevance):")
-            # for rank, doc_id in enumerate(ranked_results[:10]):
-            #     self.print_ranked_data(self.documents[doc_id])
 
             ranked_results = self.ranker.rank_vectors_results_reutrn_tuples(similarity_scores)
             # print(ranked_results)
 
-            # # Print top-k ranked documents
-            # top_k = 10
-            # for rank, (doc_id, score) in enumerate(ranked_results[:top_k]):
-            #     print(f"Rank {rank + 1}: Document {doc_id + 1}, Similarity Score: {score}")
-            #     print("doc unique id", idss[doc_id])
-            #     print(self.documents[doc_id])
-            #     # self.print_ranked_data(self.documents[doc_id])
-            #
-            #     # print(self.documents[doc_id])
-            #     print()
             for rank, (doc_id, score) in enumerate(ranked_results[:10000]):
                 relevant_idss.append(idss[doc_id])
             ranked_results_updated = [(idss[doc_id], score) for doc_id, score in ranked_results[:10000]]
@@ -608,8 +574,8 @@ class CLIInterface:
     def print_ranked_data(self, doc):
         # Process each document as needed for your IR system
         # Extract document fields
-        print(type(doc))
-        print(doc)
+        # print(type(doc))
+        # print(doc)
         doc_id = doc.get('_id')
         doc_title = doc.get('title')
         doc_text = doc.get('text')

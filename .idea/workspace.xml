@@ -5,10 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="88a41b4d-c9f4-4745-8e43-7b5d1af4aaba" name="Changes" comment="final touch">
-      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/Evaluation Metrics Results dataset2.txt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/query/multilingual_document_processor.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/query/word_embedding.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/tfidf_vectorizer.pkl" beforeDir="false" afterPath="$PROJECT_DIR$/data/tfidf_vectorizer.pkl" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/interface/cli_interface.py" beforeDir="false" afterPath="$PROJECT_DIR$/interface/cli_interface.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/storage/storage_manager.py" beforeDir="false" afterPath="$PROJECT_DIR$/storage/storage_manager.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/main_component.py" beforeDir="false" afterPath="$PROJECT_DIR$/main_component.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/query/query_processor.py" beforeDir="false" afterPath="$PROJECT_DIR$/query/query_processor.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/ranking/ranker.py" beforeDir="false" afterPath="$PROJECT_DIR$/ranking/ranker.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/read_2000.py" beforeDir="false" afterPath="$PROJECT_DIR$/read_2000.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -69,7 +75,7 @@
       <recent name="$PROJECT_DIR$" />
     </key>
   </component>
-  <component name="RunManager" selected="Python.api">
+  <component name="RunManager" selected="Python.main_component">
     <configuration name="api" type="PythonConfigurationType" factoryName="Python" temporary="true" nameIsGenerated="true">
       <module name="information_system" />
       <option name="ENV_FILES" value="" />
@@ -236,10 +242,10 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python.api" />
-        <item itemvalue="Python.main_final_dataset1" />
         <item itemvalue="Python.main_component" />
         <item itemvalue="Python.read_2000" />
+        <item itemvalue="Python.api" />
+        <item itemvalue="Python.main_final_dataset1" />
         <item itemvalue="Python.read" />
       </list>
     </recent_temporary>
