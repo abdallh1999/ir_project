@@ -147,13 +147,15 @@ from interface.cli_interface import CLIInterface
 # nltk.download()
 
 interface = CLIInterface()
-retrieved_ids, retrieved_results, relevant_docs = interface.run_final_dataset2(
-    'Patient is a 45-year-old man with a history of anaplastic astrocytoma of the spine complicated by severe lower extremity weakness and urinary retention s/p Foley catheter, high-dose steroids, hypertension, and chronic pain. The tumor is located in the T-L spine, unresectable anaplastic astrocytoma s/p radiation. Complicated by progressive lower extremity weakness and urinary retention. Patient initially presented with RLE weakness where his right knee gave out with difficulty walking and right anterior thigh numbness. MRI showed a spinal cord conus mass which was biopsied and found to be anaplastic astrocytoma. Therapy included field radiation t10-l1 followed by 11 cycles of temozolomide 7 days on and 7 days off. This was followed by CPT-11 Weekly x4 with Avastin Q2 weeks/ 2 weeks rest and repeat cycle. ')
+query_text = "48 M with a h/o HTN hyperlipidemia, bicuspid aortic valve, and tobacco abuse who presented to his cardiologist on [**2148-10-1**] with progressive SOB and LE edema. TTE revealed severe aortic stenosis with worsening LV function. EF was 25%. RV pressure was 41 and had biatrial enlargement. Noted to have 2+ aortic insufficiency with mild MR. He was sent home from cardiology clinic with Lasix and BB (which he did not tolerate), continued to have worsening SOB and LE edema and finally presented here for evaluation. During this admission repeat echo confirmed critical aortic stenosis showing left ventricular hypertrophy with cavity dilation and severe global hypokinesis, severe aortic valve stenosis with underlying bicuspid aortic valve, dilated ascending aorta, mild pulmonary artery systolic hypertension. The patient underwent a preop workup for valvular replacement with preop chest CT scan and carotid US (showing moderate heterogeneous plaque with bilateral 1-39% ICA stenosis). He also underwent a cardiac cath with right heart cath to evaluate his pulm art pressures which showed no angiographically apparent flow-limiting coronary artery disease."
+query_id="2"
+
+retrieved_ids, retrieved_results, relevant_docs = interface.run_final_dataset2(query_text=query_text)
 # print(retrieved_ids)
 # print(retrieved_results)
 matching_documents = interface.get_docs_by_ids_dataset2('clinicaltrials/2021/trec-ct-2021'
                                                         , retrieved_ids)
-e = Evaluate(actual=relevant_docs["1"], predicted=retrieved_ids, k=10)
+e = Evaluate(actual=relevant_docs[query_id], predicted=retrieved_ids, k=10)
 precision, recall, f1 = e.calculate_metrics()
 e.print_all()
 # print(retrieved_ids)
