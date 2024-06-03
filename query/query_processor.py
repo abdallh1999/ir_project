@@ -13,6 +13,21 @@ from textblob import TextBlob
 
 cureent_index = 0
 
+'''   Expand Query:
+
+    Uses wordnet to find synonyms and expand the query.
+    Adds synonyms to the original query to broaden the search.
+
+Spell Correction:
+
+    Uses textblob to correct spelling mistakes in the query.
+    Ensures the query is free from spelling errors.
+
+Refine Query:
+
+    Combines spell correction and query expansion to refine the query.
+    Provides a refined query for better search results.'''
+
 
 class QueryProcessor:
     def process_query(self, query):
